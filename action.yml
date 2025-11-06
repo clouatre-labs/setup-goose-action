@@ -1,0 +1,85 @@
+name: 'Setup Goose'
+description: 'Install and cache Goose AI agent for GitHub Actions workflows'
+author: 'clouatre-labs'
+
+inputs:
+  version:
+    description: 'Goose version to install (e.g., 1.12.1)'
+    required: false
+    default: '1.12.1'
+
+outputs:
+  goose-version:
+    description: 'Installed Goose version'
+    value: ${{ steps.install.outputs.version }}
+  goose-path:
+    description: 'Path to Goose binary directory'
+    value: ${{ steps.setup-path.outputs.path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache Goose binary
+      id: cache-goose
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/bin/goose
+        key: goose-${{ inputs.version }}-${{ runner.os }}-${{ runner.arch }}
+
+    - name: Install Goose
+      id: install
+      if: steps.cache-goose.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        echo "::group::Installing Goose v${{ inputs.version }}"
+        mkdir -p ~/.local/bin
+        
+        # Determine architecture
+        ARCH="${{ runner.arch }}"
+        if [ "$ARCH" = "X64" ]; then
+          GOOSE_ARCH="x86_64"
+        elif [ "$ARCH" = "ARM64" ]; then
+          GOOSE_ARCH="aarch64"
+        else
+          echo "::error::Unsupported architecture: $ARCH"
+          exit 1
+        fi
+        
+        # Determine OS
+        OS="${{ runner.os }}"
+        if [ "$OS" = "Linux" ]; then
+          GOOSE_OS="unknown-linux-gnu"
+        elif [ "$OS" = "macOS" ]; then
+          GOOSE_OS="apple-darwin"
+        else
+          echo "::error::Unsupported OS: $OS"
+          exit 1
+        fi
+        
+        # Download and extract
+        DOWNLOAD_URL="https://github.com/block/goose/releases/download/v${{ inputs.version }}/goose-${GOOSE_ARCH}-${GOOSE_OS}.tar.bz2"
+        echo "Downloading from: $DOWNLOAD_URL"
+        
+        curl -fsSL "$DOWNLOAD_URL" | tar -xj -C ~/.local/bin
+        chmod +x ~/.local/bin/goose
+        
+        echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+        echo "::endgroup::"
+
+    - name: Setup PATH
+      id: setup-path
+      shell: bash
+      run: |
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        echo "path=$HOME/.local/bin" >> $GITHUB_OUTPUT
+
+    - name: Verify installation
+      shell: bash
+      run: |
+        echo "::group::Verifying Goose installation"
+        goose --version
+        echo "::endgroup::"
+
+branding:
+  icon: 'zap'
+  color: 'purple'

@@ -1,0 +1,90 @@
+name: Test Action
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-ubuntu:
+    name: Test on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test action
+        uses: ./
+        id: goose
+        with:
+          version: '1.12.1'
+
+      - name: Verify installation
+        run: |
+          echo "Goose version: ${{ steps.goose.outputs.goose-version }}"
+          echo "Goose path: ${{ steps.goose.outputs.goose-path }}"
+          goose --version
+
+      - name: Test goose command
+        run: |
+          which goose
+          goose --help
+
+  test-macos:
+    name: Test on macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test action
+        uses: ./
+        with:
+          version: '1.12.1'
+
+      - name: Verify installation
+        run: |
+          goose --version
+          which goose
+
+  test-cache:
+    name: Test caching
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: First run (cache miss)
+        uses: ./
+        with:
+          version: '1.12.1'
+
+      - name: Remove binary
+        run: rm ~/.local/bin/goose
+
+      - name: Second run (cache hit)
+        uses: ./
+        with:
+          version: '1.12.1'
+
+      - name: Verify cache worked
+        run: goose --version
+
+  test-version:
+    name: Test different version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test older version
+        uses: ./
+        with:
+          version: '1.11.0'
+
+      - name: Verify correct version
+        run: |
+          VERSION=$(goose --version)
+          echo "Installed: $VERSION"
