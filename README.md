@@ -1,5 +1,8 @@
 # Setup Goose Action
 
+[![Test Action](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg)](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 GitHub Action to install and cache [Goose AI agent](https://github.com/block/goose) for use in workflows.
 
 ## Usage
