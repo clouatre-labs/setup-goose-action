@@ -9,15 +9,20 @@ GitHub Action to install and cache [Goose AI agent](https://github.com/block/goo
 
 ```yaml
 - uses: clouatre-labs/setup-goose-action@v1
-  with:
-    version: '1.12.1'  # Optional, defaults to 1.12.1
+  # Uses default version (see action.yml)
+  
+  # Or specify a version:
+  # with:
+  #   version: '1.12.1'
 ```
+
+**Default version:** See [`action.yml`](action.yml#L9) for the current default.
 
 ## Inputs
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `version` | Goose version to install | No | `1.12.1` |
+| `version` | Goose version to install | No | See [`action.yml`](action.yml#L9) |
 
 ## Outputs
 

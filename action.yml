@@ -4,9 +4,9 @@ author: 'clouatre-labs'
 
 inputs:
   version:
-    description: 'Goose version to install (e.g., 1.12.1)'
+    description: 'Goose version to install (e.g., 1.14.0)'
     required: false
-    default: '1.12.1'
+    default: '1.14.0'
 
 outputs:
   goose-version:
