@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  DEFAULT_GOOSE_VERSION: '1.14.0'
+
 jobs:
   test-ubuntu:
     name: Test on Ubuntu
@@ -19,7 +22,7 @@ jobs:
         uses: ./
         id: goose
         with:
-          version: '1.12.1'
+          version: ${{ env.DEFAULT_GOOSE_VERSION }}
 
       - name: Verify installation
         run: |
@@ -42,7 +45,7 @@ jobs:
       - name: Test action
         uses: ./
         with:
-          version: '1.12.1'
+          version: ${{ env.DEFAULT_GOOSE_VERSION }}
 
       - name: Verify installation
         run: |
@@ -59,7 +62,7 @@ jobs:
       - name: First run (cache miss)
         uses: ./
         with:
-          version: '1.12.1'
+          version: ${{ env.DEFAULT_GOOSE_VERSION }}
 
       - name: Remove binary
         run: rm ~/.local/bin/goose
@@ -67,7 +70,7 @@ jobs:
       - name: Second run (cache hit)
         uses: ./
         with:
-          version: '1.12.1'
+          version: ${{ env.DEFAULT_GOOSE_VERSION }}
 
       - name: Verify cache worked
         run: goose --version
