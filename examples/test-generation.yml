@@ -1,0 +1,42 @@
+# Example: Automated Test Generation
+# Generate unit tests for new code
+
+name: Generate Tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: clouatre-labs/setup-goose-action@v1
+      
+      - name: Generate unit tests
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          goose session --profile ci <<EOF
+          Analyze the code in src/ directory.
+          Generate comprehensive unit tests for any files missing tests.
+          Follow existing test patterns in tests/ directory.
+          EOF
+      
+      - name: Create PR with tests
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "test: add generated unit tests"
+          title: "Add automated test coverage"
+          branch: automated-tests
+          body: |
+            Automated test generation by Goose AI
+            
+            Review and merge if tests are appropriate.
