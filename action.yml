@@ -1,4 +1,4 @@
-name: 'Setup Goose'
+name: 'Setup Goose CLI'
 description: 'Install and cache Goose AI agent for GitHub Actions workflows'
 author: 'Hugues Clouâtre'
 
