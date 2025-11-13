@@ -50,44 +50,6 @@ This action uses **independent versioning** from Goose itself.
 
 ## Quick Start
 
-This example runs an AI code review on every pull request.
-
-```yaml
-name: AI Code Review
-on: [pull_request]
-
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: clouatre-labs/setup-goose-action@v1
-
-      - name: Review changes
-        env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-        run: |
-          # Configure Goose for non-interactive use
-          mkdir -p ~/.config/goose
-          cat > ~/.config/goose/config.yaml << EOF
-          GOOSE_PROVIDER: google
-          GOOSE_MODEL: gemini-2.5-flash
-          keyring: false
-          EOF
-
-          # Create instruction file with prompt and diff
-          echo "Review this diff for bugs and logic errors:" > review-instructions.txt
-          git diff origin/${{ github.base_ref }}...HEAD >> review-instructions.txt
-
-          # Run the review
-          goose run --instructions review-instructions.txt --no-session --quiet
-```
-
-## Advanced Example: Posting Reviews to a Pull Request
-
 This workflow runs a review and posts the results as a comment on the PR.
 
 ```yaml
