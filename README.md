@@ -39,14 +39,14 @@ This action uses **independent versioning** from Goose itself.
 
 ## Prerequisites
 
-Before using this action, configure a secret for your AI provider:
+1. **Get an API key** from your chosen provider: [Supported Providers](https://block.github.io/goose/docs/getting-started/providers/)
 
-1. Go to **Settings → Secrets and variables → Actions** in your repository
-2. Click **New repository secret**
-3. Add your API key:
-   - **Google:** `GOOGLE_API_KEY`
-   - **OpenAI:** `OPENAI_API_KEY`
-   - **Anthropic:** `ANTHROPIC_API_KEY`
+2. **Add it as a repository secret:**
+   - Go to **Settings → Secrets and variables → Actions**
+   - Click **New repository secret**
+   - Name it (e.g., `GEMINI_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)
+
+3. **Configure in your workflow** - map your secret to Goose's expected environment variable (see examples below)
 
 ## Quick Start
 
