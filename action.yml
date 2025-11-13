@@ -1,6 +1,6 @@
 name: 'Setup Goose'
 description: 'Install and cache Goose AI agent for GitHub Actions workflows'
-author: 'clouatre-labs'
+author: 'Hugues Clouâtre'
 
 inputs:
   version:
