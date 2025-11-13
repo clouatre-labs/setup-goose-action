@@ -1,10 +1,13 @@
 # Setup Goose Action
 
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github)](https://github.com/marketplace/actions/setup-goose-cli)
 [![Test Action](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg)](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/clouatre-labs/setup-goose-action)](https://github.com/clouatre-labs/setup-goose-action/releases/latest)
 
 GitHub Action to install and cache [Goose AI agent](https://github.com/block/goose) for use in workflows.
+
+**Available on the [GitHub Marketplace](https://github.com/marketplace/actions/setup-goose-cli)**
 
 ## Versioning
 
@@ -33,6 +36,118 @@ This action uses **independent versioning** from Goose itself.
 ```
 
 **Current default Goose version:** See [`action.yml`](action.yml#L9)
+
+## Prerequisites
+
+Before using this action, configure a secret for your AI provider:
+
+1. Go to **Settings → Secrets and variables → Actions** in your repository
+2. Click **New repository secret**
+3. Add your API key:
+   - **Google:** `GOOGLE_API_KEY`
+   - **OpenAI:** `OPENAI_API_KEY`
+   - **Anthropic:** `ANTHROPIC_API_KEY`
+
+## Quick Start
+
+This example runs an AI code review on every pull request.
+
+```yaml
+name: AI Code Review
+on: [pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: clouatre-labs/setup-goose-action@v1
+
+      - name: Review changes
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          # Configure Goose for non-interactive use
+          mkdir -p ~/.config/goose
+          cat > ~/.config/goose/config.yaml << EOF
+          GOOSE_PROVIDER: google
+          GOOSE_MODEL: gemini-2.5-flash
+          keyring: false
+          EOF
+
+          # Create instruction file with prompt and diff
+          echo "Review this diff for bugs and logic errors:" > review-instructions.txt
+          git diff origin/${{ github.base_ref }}...HEAD >> review-instructions.txt
+
+          # Run the review
+          goose run --instructions review-instructions.txt --no-session --quiet
+```
+
+## Advanced Example: Posting Reviews to a Pull Request
+
+This workflow runs a review and posts the results as a comment on the PR.
+
+```yaml
+name: AI Code Review with PR Comment
+on: [pull_request]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: clouatre-labs/setup-goose-action@v1
+
+      - name: Configure and Run Review
+        id: review
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          # Configure Goose
+          mkdir -p ~/.config/goose
+          cat > ~/.config/goose/config.yaml << EOF
+          GOOSE_PROVIDER: google
+          GOOSE_MODEL: gemini-2.5-flash
+          keyring: false
+          EOF
+
+          # Generate diff and check if empty
+          git diff origin/${{ github.base_ref }}...HEAD > changes.diff
+          if [ ! -s changes.diff ]; then
+            echo "No changes detected." > review-comment.md
+            echo "comment-file=review-comment.md" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Create instructions and run review
+          echo "Review this diff for bugs and logic errors:" > instructions.txt
+          cat changes.diff >> instructions.txt
+          goose run --instructions instructions.txt --no-session --quiet > review-comment.md 2>&1
+          
+          echo "comment-file=review-comment.md" >> $GITHUB_OUTPUT
+
+      - name: Post Review Comment to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('${{ steps.review.outputs.comment-file }}', 'utf8');
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
+```
 
 ## Inputs
 
