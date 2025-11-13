@@ -17,6 +17,7 @@ This action uses **independent versioning** from Goose itself.
 
 | Action Version | Default Goose Version | Release Date |
 |---------------|----------------------|--------------|
+| v1.0.3 | 1.14.0 | 2025-11-13 |
 | v1.0.1 | 1.14.0 | 2025-11-12 |
 | v1.0.0 | 1.12.1 | 2025-11-06 |
 
@@ -27,7 +28,7 @@ This action uses **independent versioning** from Goose itself.
 - uses: clouatre-labs/setup-goose-action@v1
 
 # Conservative: Pin to exact version
-- uses: clouatre-labs/setup-goose-action@v1.0.1
+- uses: clouatre-labs/setup-goose-action@v1.0.3
 
 # Custom Goose version
 - uses: clouatre-labs/setup-goose-action@v1
@@ -123,97 +124,6 @@ jobs:
 |--------|-------------|
 | `goose-version` | Installed Goose version |
 | `goose-path` | Path to Goose binary directory |
-
-## Examples
-
-### Basic Usage
-
-```yaml
-name: AI Code Review
-on: pull_request
-
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - uses: clouatre-labs/setup-goose-action@v1
-      
-      - name: Run Goose
-        env:
-          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: goose session --profile ci
-```
-
-### Specify Version
-
-```yaml
-- uses: clouatre-labs/setup-goose-action@v1
-  with:
-    version: '1.11.0'
-```
-
-### Use Outputs
-
-```yaml
-- uses: clouatre-labs/setup-goose-action@v1
-  id: goose
-
-- name: Display version
-  run: echo "Installed Goose ${{ steps.goose.outputs.goose-version }}"
-```
-
-### Complete Workflow Example
-
-```yaml
-name: Goose Logic Review
-on:
-  pull_request:
-    paths:
-      - 'src/**'
-      - 'tests/**'
-
-permissions:
-  contents: read
-  pull-requests: write
-
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - uses: clouatre-labs/setup-goose-action@v1
-        with:
-          version: '1.12.1'
-      
-      - name: Configure Goose
-        run: |
-          mkdir -p ~/.config/goose
-          cat <<EOF > ~/.config/goose/config.yaml
-          GOOSE_PROVIDER: google
-          GOOSE_MODEL: gemini-2.0-flash-exp
-          keyring: false
-          EOF
-      
-      - name: Get changed files
-        id: changes
-        run: |
-          git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
-          cat changed_files.txt
-      
-      - name: Review with Goose
-        env:
-          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          goose session --profile ci <<EOF
-          Review the following changed files for logic issues:
-          $(cat changed_files.txt)
-          EOF
-```
 
 ## Features
 
