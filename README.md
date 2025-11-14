@@ -1,7 +1,7 @@
 # Setup Goose Action
 
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github)](https://github.com/marketplace/actions/setup-goose-cli)
 [![Test Action](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg)](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github)](https://github.com/marketplace/actions/setup-goose-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/clouatre-labs/setup-goose-action)](https://github.com/clouatre-labs/setup-goose-action/releases/latest)
 
@@ -124,6 +124,52 @@ jobs:
 |--------|-------------|
 | `goose-version` | Installed Goose version |
 | `goose-path` | Path to Goose binary directory |
+
+## Examples
+
+### Security Scan with Artifact Upload
+
+```yaml
+name: Security Scan
+on: [push]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: clouatre-labs/setup-goose-action@v1
+      
+      - name: Scan files for security issues
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          mkdir -p reports
+          find . -name "*.py" -o -name "*.js" | head -5 | while read file; do
+            echo "Scanning $file..." >&2
+            echo "Review this file for security vulnerabilities: $(cat $file)" | \
+              goose run --instructions - --no-session --quiet >> reports/security-scan.txt
+            echo -e "\n---\n" >> reports/security-scan.txt
+          done
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results
+          path: reports/
+          retention-days: 30
+```
+
+### Pin to Specific Version
+
+```yaml
+- uses: clouatre-labs/setup-goose-action@v1
+  with:
+    version: '1.14.0'
+```
 
 ## Features
 
