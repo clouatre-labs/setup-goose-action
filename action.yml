@@ -78,6 +78,8 @@ runs:
       run: |
         echo "::group::Verifying Goose installation"
         goose --version
+        echo "Installed binary:"
+        ls -lh ~/.local/bin/goose
         echo "::endgroup::"
 
 branding:
