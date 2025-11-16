@@ -32,7 +32,7 @@ jobs:
 
       - name: AI Analysis of Lint Results
         env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           echo "Summarize these linting issues and suggest fixes:" > prompt.txt
           cat lint-results.json >> prompt.txt
