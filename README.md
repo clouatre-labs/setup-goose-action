@@ -71,9 +71,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Lint Code
-        run: |
-          pipx install uv
-          uv tool run ruff check --output-format=json . > lint-results.json || true
+        run: pipx run ruff check --output-format=json . > lint-results.json || true
 
       - name: Setup Goose CLI
         uses: clouatre-labs/setup-goose-action@v1
@@ -114,49 +112,6 @@ jobs:
 | `goose-path` | Path to Goose binary directory |
 
 ## Examples
-
-### Security Scan with Artifact Upload
-
-```yaml
-name: Security Scan
-on: [push]
-
-permissions:
-  contents: read
-
-jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      
-      - name: Run Security Scanner
-        run: |
-          pipx install uv
-          uv tool run ruff check --select S --output-format=json . > security.json || true
-      
-      - uses: clouatre-labs/setup-goose-action@v1
-      
-      - name: AI Analysis
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          mkdir -p ~/.config/goose
-          cat > ~/.config/goose/config.yaml << 'EOF'
-          GOOSE_PROVIDER: anthropic
-          GOOSE_MODEL: claude-haiku-4-5-20251001
-          keyring: false
-          EOF
-          
-          echo "Summarize security findings:" > prompt.txt
-          cat security.json >> prompt.txt
-          goose run --instructions prompt.txt --no-session --quiet > report.md
-      
-      - uses: actions/upload-artifact@v5
-        with:
-          name: security-report
-          path: report.md
-```
 
 ### Pin to Specific Version
 

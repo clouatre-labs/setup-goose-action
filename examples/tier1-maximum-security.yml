@@ -12,9 +12,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Lint Code
-        run: |
-          pipx install uv
-          uv tool run ruff check --output-format=json . > lint.json || true
+        run: pipx run ruff check --output-format=json . > lint.json || true
 
       - name: Setup Goose CLI
         uses: clouatre-labs/setup-goose-action@v1
