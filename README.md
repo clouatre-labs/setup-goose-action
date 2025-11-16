@@ -49,8 +49,10 @@ This action uses **independent versioning** from Goose itself.
 
 3. **Configure in your workflow** - map your secret to Goose's expected environment variable (see examples below)
 
-> [!WARNING]
-> AI tools can be manipulated via code comments and commit messages. This example analyzes tool output only. See [examples/](examples/) for other patterns.
+> [!IMPORTANT]
+> **Prompt Injection Risk:** When AI analyzes user-controlled input (git diffs, code comments, commit messages), malicious actors can embed instructions to manipulate output. This applies to ANY AI tool, not just Goose or this action.
+> 
+> For production use, see [examples/](examples/) for defensive patterns (tool output analysis, input sanitization, trusted-only execution).
 
 ## Quick Start
 
@@ -65,14 +67,16 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
 
       - name: Lint Code
         run: |
           pipx install uv
           uv tool run ruff check --output-format=json . > lint-results.json || true
 
-      - uses: clouatre-labs/setup-goose-action@v1
+      - name: Setup Goose CLI
+        uses: clouatre-labs/setup-goose-action@v1
 
       - name: AI Analysis
         env:
@@ -89,7 +93,8 @@ jobs:
           cat lint-results.json >> prompt.txt
           goose run --instructions prompt.txt --no-session --quiet > analysis.md
 
-      - uses: actions/upload-artifact@v5
+      - name: Upload Analysis Artifact
+        uses: actions/upload-artifact@v5
         with:
           name: ai-analysis
           path: analysis.md
