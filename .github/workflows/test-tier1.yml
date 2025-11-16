@@ -27,6 +27,15 @@ jobs:
         env:
           GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
+          # Configure Goose
+          mkdir -p ~/.config/goose
+          cat > ~/.config/goose/config.yaml <<EOF
+          GOOSE_PROVIDER: google
+          GOOSE_MODEL: gemini-2.5-flash
+          keyring: false
+          EOF
+          
+          # Run analysis
           echo "Summarize these linting issues:" > prompt.txt
           cat lint.json >> prompt.txt
           goose run --instructions prompt.txt --no-session --quiet > analysis.md
