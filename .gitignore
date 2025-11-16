@@ -16,3 +16,29 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Coding agents (prevents accidental commit of AI instructions)
+AGENTS.md
+.aider*
+.amazonq/
+.bolt/
+.claude/
+CLAUDE.md
+.codex/
+.cursor/
+.goose*
+opencode.json
+.windsurf/
+
+# Environment files
+.env
+.env.local
+*.local.env
+
+# Node.js (for local testing with act)
+node_modules/
+
+# Python (for testing examples)
+__pycache__/
+.pytest_cache/
+*.py[cod]
