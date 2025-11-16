@@ -1,0 +1,38 @@
+name: AI Analysis - Maximum Security
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Lint Code
+        run: |
+          pipx install uv
+          uv tool run ruff check --output-format=json . > lint.json || true
+
+      - uses: clouatre-labs/setup-goose-action@v1
+
+      - name: AI Analysis
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          mkdir -p ~/.config/goose
+          cat > ~/.config/goose/config.yaml << 'EOF'
+          GOOSE_PROVIDER: google
+          GOOSE_MODEL: gemini-2.5-flash
+          keyring: false
+          EOF
+          
+          echo "Summarize these linting issues:" > prompt.txt
+          cat lint.json >> prompt.txt
+          goose run --instructions prompt.txt --no-session --quiet > analysis.md
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ai-analysis
+          path: analysis.md

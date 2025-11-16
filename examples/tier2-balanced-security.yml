@@ -1,0 +1,62 @@
+name: AI Analysis - Balanced Security
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: clouatre-labs/setup-goose-action@v1
+
+      - name: Generate Diff Stats
+        run: git diff --stat origin/${{ github.base_ref }}...HEAD > diff-stats.txt
+
+      - name: AI Analysis
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          mkdir -p ~/.config/goose
+          cat > ~/.config/goose/config.yaml << 'EOF'
+          GOOSE_PROVIDER: anthropic
+          GOOSE_MODEL: claude-haiku-4-5-20251001
+          keyring: false
+          EOF
+          
+          echo "Review these changes:" > prompt.txt
+          cat diff-stats.txt >> prompt.txt
+          goose run --instructions prompt.txt --no-session --quiet > review.md
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ai-review
+          path: review.md
+
+  post:
+    needs: analyze
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: ai-review
+
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('review.md', 'utf8');
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });

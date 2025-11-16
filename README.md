@@ -49,67 +49,43 @@ This action uses **independent versioning** from Goose itself.
 
 3. **Configure in your workflow** - map your secret to Goose's expected environment variable (see examples below)
 
+> [!WARNING]
+> AI tools can be manipulated via code comments and commit messages. This example analyzes tool output only. See [examples/](examples/) for other patterns.
+
 ## Quick Start
 
-This workflow runs a review and posts the results as a comment on the PR.
-
 ```yaml
-name: AI Code Review with PR Comment
+name: Secure AI Analysis
 on: [pull_request]
 
 permissions:
-  pull-requests: write
+  contents: read
 
 jobs:
-  review:
+  analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v5
+
+      - name: Lint Code
+        run: |
+          pipx install uv
+          uv tool run ruff check --output-format=json . > lint-results.json || true
 
       - uses: clouatre-labs/setup-goose-action@v1
 
-      - name: Configure and Run Review
-        id: review
+      - name: AI Analysis
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
-          # Configure Goose
-          mkdir -p ~/.config/goose
-          cat > ~/.config/goose/config.yaml << EOF
-          GOOSE_PROVIDER: google
-          GOOSE_MODEL: gemini-2.5-flash
-          keyring: false
-          EOF
+          echo "Summarize these linting issues:" > prompt.txt
+          cat lint-results.json >> prompt.txt
+          goose run --instructions prompt.txt --no-session --quiet > analysis.md
 
-          # Generate diff and check if empty
-          git diff origin/${{ github.base_ref }}...HEAD > changes.diff
-          if [ ! -s changes.diff ]; then
-            echo "No changes detected." > review-comment.md
-            echo "comment-file=review-comment.md" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Create instructions and run review
-          echo "Review this diff for bugs and logic errors:" > instructions.txt
-          cat changes.diff >> instructions.txt
-          goose run --instructions instructions.txt --no-session --quiet > review-comment.md 2>&1
-          
-          echo "comment-file=review-comment.md" >> $GITHUB_OUTPUT
-
-      - name: Post Review Comment to PR
-        uses: actions/github-script@v7
+      - uses: actions/upload-artifact@v5
         with:
-          script: |
-            const fs = require('fs');
-            const body = fs.readFileSync('${{ steps.review.outputs.comment-file }}', 'utf8');
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: body
-            });
+          name: ai-analysis
+          path: analysis.md
 ```
 
 ## Inputs
@@ -140,27 +116,27 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+      
+      - name: Run Security Scanner
+        run: |
+          pipx install uv
+          uv tool run ruff check --select S --output-format=json . > security.json || true
       
       - uses: clouatre-labs/setup-goose-action@v1
       
-      - name: Scan files for security issues
+      - name: AI Analysis
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          mkdir -p reports
-          find . -name "*.py" -o -name "*.js" | head -5 | while read file; do
-            echo "Scanning $file..." >&2
-            echo "Review this file for security vulnerabilities: $(cat $file)" | \
-              goose run --instructions - --no-session --quiet >> reports/security-scan.txt
-            echo -e "\n---\n" >> reports/security-scan.txt
-          done
+          echo "Summarize security findings:" > prompt.txt
+          cat security.json >> prompt.txt
+          goose run --instructions prompt.txt --no-session --quiet > report.md
       
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
-          name: security-scan-results
-          path: reports/
-          retention-days: 30
+          name: security-report
+          path: report.md
 ```
 
 ### Pin to Specific Version
@@ -170,6 +146,15 @@ jobs:
   with:
     version: '1.14.0'
 ```
+
+## Security
+
+**Safe Pattern:** AI analyzes tool output (ruff, trivy, semgrep), not raw code.
+
+**Unsafe Pattern:** AI analyzes git diffs directly → vulnerable to prompt injection.
+
+See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.  
+See [examples/](examples/) for different security tiers.
 
 ## Features
 
