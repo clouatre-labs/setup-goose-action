@@ -78,6 +78,13 @@ jobs:
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
+          mkdir -p ~/.config/goose
+          cat > ~/.config/goose/config.yaml << 'EOF'
+          GOOSE_PROVIDER: google
+          GOOSE_MODEL: gemini-2.5-flash
+          keyring: false
+          EOF
+          
           echo "Summarize these linting issues:" > prompt.txt
           cat lint-results.json >> prompt.txt
           goose run --instructions prompt.txt --no-session --quiet > analysis.md
@@ -129,6 +136,13 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
+          mkdir -p ~/.config/goose
+          cat > ~/.config/goose/config.yaml << 'EOF'
+          GOOSE_PROVIDER: anthropic
+          GOOSE_MODEL: claude-haiku-4-5-20251001
+          keyring: false
+          EOF
+          
           echo "Summarize security findings:" > prompt.txt
           cat security.json >> prompt.txt
           goose run --instructions prompt.txt --no-session --quiet > report.md
