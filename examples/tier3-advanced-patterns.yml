@@ -11,11 +11,13 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.actor != 'dependabot[bot]'
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - uses: clouatre-labs/setup-goose-action@v1
+      - name: Setup Goose CLI
+        uses: clouatre-labs/setup-goose-action@v1
 
       - name: AI Diff Review
         env:
@@ -43,7 +45,8 @@ jobs:
           cat changes.diff >> prompt.txt
           goose run --instructions prompt.txt --no-session --quiet > review.md
 
-      - uses: actions/upload-artifact@v5
+      - name: Upload Review Artifact
+        uses: actions/upload-artifact@v5
         with:
           name: ai-review
           path: review.md

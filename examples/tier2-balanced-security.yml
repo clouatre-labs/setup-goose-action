@@ -9,11 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - uses: clouatre-labs/setup-goose-action@v1
+      - name: Setup Goose CLI
+        uses: clouatre-labs/setup-goose-action@v1
 
       - name: Generate Diff Stats
         run: git diff --stat origin/${{ github.base_ref }}...HEAD > diff-stats.txt
@@ -33,7 +35,8 @@ jobs:
           cat diff-stats.txt >> prompt.txt
           goose run --instructions prompt.txt --no-session --quiet > review.md
 
-      - uses: actions/upload-artifact@v5
+      - name: Upload Review Artifact
+        uses: actions/upload-artifact@v5
         with:
           name: ai-review
           path: review.md
@@ -45,11 +48,13 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - uses: actions/download-artifact@v6
+      - name: Download Review Artifact
+        uses: actions/download-artifact@v6
         with:
           name: ai-review
 
-      - uses: actions/github-script@v8
+      - name: Post Review Comment
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
