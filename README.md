@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Lint Code
         run: pipx run ruff check --output-format=json . > lint-results.json || true
