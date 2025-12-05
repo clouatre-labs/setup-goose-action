@@ -1,0 +1,16 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^action\\.yml$"],
+      "matchStrings": [
+        "default:\\s*['\"](?<currentValue>\\d+\\.\\d+\\.\\d+)['\"]"
+      ],
+      "depNameTemplate": "block/goose",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    }
+  ]
+}
