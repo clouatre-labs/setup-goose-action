@@ -36,6 +36,20 @@ jobs:
           
           LATEST="${{ steps.versions.outputs.latest }}"
           CURRENT="${{ steps.versions.outputs.current }}"
+          BRANCH_NAME="update-version-${LATEST}"
+          
+          # Check if PR already exists for this version
+          EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[0].number // empty')
+          if [[ -n "$EXISTING_PR" ]]; then
+            echo "PR #$EXISTING_PR already exists for $BRANCH_NAME, skipping"
+            exit 0
+          fi
+          
+          # Delete orphan branch if exists (branch without PR)
+          if git ls-remote --exit-code --heads origin "$BRANCH_NAME" >/dev/null 2>&1; then
+            echo "Deleting orphan branch $BRANCH_NAME (no PR exists)"
+            gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$BRANCH_NAME"
+          fi
           
           # Update action.yml
           yq -i ".inputs.version.default = \"$LATEST\"" action.yml
