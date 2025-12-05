@@ -14,12 +14,12 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
       - name: Lint Code
         run: pipx run ruff check --output-format=json . > lint.json || true
 
-      - uses: clouatre-labs/setup-goose-action@v1
+      - uses: clouatre-labs/setup-goose-action@b656a5484753bb7361dc4a68dcdb19070376d6f5 # v1
 
       - name: AI Analysis
         env:
@@ -38,7 +38,7 @@ jobs:
           cat lint.json >> prompt.txt
           goose run --instructions prompt.txt --no-session --quiet > analysis.md
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: ai-analysis
           path: analysis.md
