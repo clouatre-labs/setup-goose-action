@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 env:
-  DEFAULT_GOOSE_VERSION: '1.14.0'
+  DEFAULT_GOOSE_VERSION: '1.15.0'
 
 jobs:
   test-ubuntu:
