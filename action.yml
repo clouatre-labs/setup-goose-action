@@ -1,17 +1,20 @@
 name: 'Setup Goose CLI'
 description: 'Install and cache Goose AI agent for GitHub Actions workflows'
 author: 'Hugues Clouâtre'
+
 keywords:
   - ai
   - ai-agent
   - goose
   - automation
   - cli
+
 inputs:
   version:
     description: 'Goose version to install (e.g., 1.14.0)'
     required: false
     default: '1.15.0'
+
 outputs:
   goose-version:
     description: 'Installed Goose version'
@@ -19,6 +22,7 @@ outputs:
   goose-path:
     description: 'Path to Goose binary directory'
     value: ${{ steps.setup-path.outputs.path }}
+
 runs:
   using: 'composite'
   steps:
@@ -28,6 +32,7 @@ runs:
       with:
         path: ~/.local/bin/goose
         key: goose-${{ inputs.version }}-${{ runner.os }}-${{ runner.arch }}
+
     - name: Install Goose
       id: install
       if: steps.cache-goose.outputs.cache-hit != 'true'
@@ -35,7 +40,7 @@ runs:
       run: |
         echo "::group::Installing Goose v${{ inputs.version }}"
         mkdir -p ~/.local/bin
-
+        
         # Determine architecture
         ARCH="${{ runner.arch }}"
         if [ "$ARCH" = "X64" ]; then
@@ -46,7 +51,7 @@ runs:
           echo "::error::Unsupported architecture: $ARCH"
           exit 1
         fi
-
+        
         # Determine OS
         OS="${{ runner.os }}"
         if [ "$OS" = "Linux" ]; then
@@ -57,22 +62,24 @@ runs:
           echo "::error::Unsupported OS: $OS"
           exit 1
         fi
-
+        
         # Download and extract
         DOWNLOAD_URL="https://github.com/block/goose/releases/download/v${{ inputs.version }}/goose-${GOOSE_ARCH}-${GOOSE_OS}.tar.bz2"
         echo "Downloading from: $DOWNLOAD_URL"
-
+        
         curl -fsSL "$DOWNLOAD_URL" | tar -xj -C ~/.local/bin
         chmod +x ~/.local/bin/goose
-
+        
         echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
         echo "::endgroup::"
+
     - name: Setup PATH
       id: setup-path
       shell: bash
       run: |
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         echo "path=$HOME/.local/bin" >> $GITHUB_OUTPUT
+
     - name: Verify installation
       shell: bash
       run: |
@@ -81,6 +88,7 @@ runs:
         echo "Installed binary:"
         ls -lh ~/.local/bin/goose
         echo "::endgroup::"
+
 branding:
   icon: 'zap'
   color: 'purple'
