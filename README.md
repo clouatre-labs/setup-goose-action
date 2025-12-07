@@ -2,12 +2,19 @@
 
 [![Test Action](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg)](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml)
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github)](https://github.com/marketplace/actions/setup-goose-cli)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-blue?logo=github)](SECURITY.md)
+[![Composite Action](https://img.shields.io/badge/Composite-Action-green?logo=github)](https://docs.github.com/en/actions/creating-actions/about-custom-actions#composite-actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/clouatre-labs/setup-goose-action)](https://github.com/clouatre-labs/setup-goose-action/releases/latest)
 
 GitHub Action to install and cache [Goose AI agent](https://github.com/block/goose) for use in workflows.
 
 **Available on the [GitHub Marketplace](https://github.com/marketplace/actions/setup-goose-cli)**
+
+> [!IMPORTANT]
+> **Prompt Injection Risk:** When AI analyzes user-controlled input (git diffs, code comments, commit messages), malicious actors can embed instructions to manipulate output. This applies to ANY AI tool, not just Goose or this action.
+>
+> For production use, see [Security Patterns](#security-patterns) below for three defensive tiers (tool output analysis, manual approval, trusted-only execution).
 
 ## Usage
 
@@ -35,14 +42,9 @@ GitHub Action to install and cache [Goose AI agent](https://github.com/block/goo
    - Click **New repository secret**
    - Name it (e.g., `GEMINI_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)
 
-3. **Configure in your workflow** - map your secret to Goose's expected environment variable (see examples below)
+3. **Configure in your workflow** - map your secret to Goose's expected environment variable (see [Security Patterns](#security-patterns) below)
 
-> [!IMPORTANT]
-> **Prompt Injection Risk:** When AI analyzes user-controlled input (git diffs, code comments, commit messages), malicious actors can embed instructions to manipulate output. This applies to ANY AI tool, not just Goose or this action.
-> 
-> For production use, see [examples/](examples/) for defensive patterns (tool output analysis, input sanitization, trusted-only execution).
-
-## Quick Start
+## Quick Start - Tier 1 (Maximum Security)
 
 ```yaml
 name: Secure AI Analysis
@@ -115,8 +117,17 @@ jobs:
 
 **Unsafe Pattern:** AI analyzes git diffs directly → vulnerable to prompt injection.
 
-See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.  
-See [examples/](examples/) for different security tiers.
+See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
+
+## Security Patterns
+
+This action supports three security tiers for AI-augmented CI/CD:
+
+- **Tier 1 (Maximum Security)**: AI analyzes only tool output (JSON), never raw code. [See workflow](examples/tier1-maximum-security.yml)
+- **Tier 2**: AI sees file stats, requires manual approval. [See workflow](examples/tier2-moderate-security.yml)
+- **Tier 3**: Full diff analysis, trusted teams only. [See workflow](examples/tier3-full-context.yml)
+
+Read the full explanation: [AI-Augmented CI/CD blog post](https://clouatre.ca/posts/ai-augmented-cicd)
 
 ## Features
 
