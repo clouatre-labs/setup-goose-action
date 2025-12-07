@@ -5,7 +5,13 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  merge_group:
+    branches: [main]
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -16,6 +22,7 @@ env:
 jobs:
   test-ubuntu:
     name: Test on Ubuntu
+    if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -40,6 +47,7 @@ jobs:
 
   test-macos:
     name: Test on macOS
+    if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -57,6 +65,7 @@ jobs:
 
   test-cache:
     name: Test caching
+    if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -80,6 +89,7 @@ jobs:
 
   test-version:
     name: Test different version
+    if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
