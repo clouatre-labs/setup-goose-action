@@ -133,18 +133,18 @@ Read the full explanation: [AI-Augmented CI/CD blog post](https://clouatre.ca/po
 
 - **Caching**: Automatically caches Goose binary for faster subsequent runs
 - **Version Pinning**: Install specific Goose versions for reproducible builds
-- **Cross-Platform**: Supports Linux (x64, arm64) and macOS (x64, arm64)
 - **Lightweight**: Composite action with no external dependencies
 
 ## Supported Platforms
 
 | OS | Architecture | Status |
 |----|--------------|--------|
-| Ubuntu | x64 | ✅ Supported |
-| Ubuntu | arm64 | ✅ Supported |
-| macOS | x64 | ✅ Supported |
-| macOS | arm64 | ✅ Supported |
-| Windows | - | ❌ Not supported |
+| Ubuntu | x64 | Supported |
+| Ubuntu | arm64 | Supported |
+| macOS | - | Not supported |
+| Windows | - | Not supported |
+
+> **Note:** This action only supports Linux runners. macOS runners have a 10x billing multiplier on GitHub Actions, and there's no practical use case for running Goose on macOS in CI (Goose executes prompts and tool calls, nothing platform-specific).
 
 ## How It Works
 
