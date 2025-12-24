@@ -26,6 +26,14 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Check platform
+      shell: bash
+      run: |
+        if [ "${{ runner.os }}" != "Linux" ]; then
+          echo "::error::This action only supports Linux runners. Current OS: ${{ runner.os }}"
+          exit 1
+        fi
+
     - name: Cache Goose binary
       id: cache-goose
       uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5
@@ -52,19 +60,8 @@ runs:
           exit 1
         fi
         
-        # Determine OS
-        OS="${{ runner.os }}"
-        if [ "$OS" = "Linux" ]; then
-          GOOSE_OS="unknown-linux-gnu"
-        elif [ "$OS" = "macOS" ]; then
-          GOOSE_OS="apple-darwin"
-        else
-          echo "::error::Unsupported OS: $OS"
-          exit 1
-        fi
-        
         # Download and extract
-        DOWNLOAD_URL="https://github.com/block/goose/releases/download/v${{ inputs.version }}/goose-${GOOSE_ARCH}-${GOOSE_OS}.tar.bz2"
+        DOWNLOAD_URL="https://github.com/block/goose/releases/download/v${{ inputs.version }}/goose-${GOOSE_ARCH}-unknown-linux-gnu.tar.bz2"
         echo "Downloading from: $DOWNLOAD_URL"
         
         curl -fsSL "$DOWNLOAD_URL" | tar -xj -C ~/.local/bin

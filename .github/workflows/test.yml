@@ -45,24 +45,6 @@ jobs:
           which goose
           goose --help
 
-  test-macos:
-    name: Test on macOS
-    if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-
-      - name: Test action
-        uses: ./
-        with:
-          version: ${{ env.DEFAULT_GOOSE_VERSION }}
-
-      - name: Verify installation
-        run: |
-          goose --version
-          which goose
-
   test-cache:
     name: Test caching
     if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
