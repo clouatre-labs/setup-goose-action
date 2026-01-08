@@ -110,6 +110,7 @@ jobs:
     name: Test version ${{ matrix.version }}
     if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -120,7 +121,7 @@ jobs:
           - '1.15.0'
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Test action
         uses: ./
@@ -131,7 +132,8 @@ jobs:
         run: |
           INSTALLED=$(goose --version)
           echo "Goose version: $INSTALLED"
-          if ! echo "$INSTALLED" | grep -q "${{ matrix.version }}"; then
+          # Use word boundary regex to prevent substring matches (e.g., '1.1' matching '1.15.0')
+          if ! echo "$INSTALLED" | grep -qE "(^|[^0-9.])${{ matrix.version }}([^0-9.]|$)"; then
             echo "::error::Expected version ${{ matrix.version }}, but got $INSTALLED"
             exit 1
           fi
