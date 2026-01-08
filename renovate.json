@@ -1,19 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:best-practices"
-  ],
+  "extends": ["config:best-practices"],
+  "labels": ["dependencies"],
   "platformAutomerge": true,
-  "labels": [
-    "dependencies"
-  ],
-  "dependencyDashboard": false,
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "^action\\.yml$"
-      ],
+      "fileMatch": ["^action\\.yml$"],
       "matchStrings": [
         "default:\\s*['\"](?<currentValue>\\d+\\.\\d+\\.\\d+)['\"]"
       ],
@@ -24,15 +17,11 @@
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": [
-        "patch"
-      ],
+      "matchUpdateTypes": ["patch"],
       "automerge": true
     },
     {
-      "matchManagers": [
-        "github-actions"
-      ],
+      "matchManagers": ["github-actions"],
       "automerge": true
     }
   ]
