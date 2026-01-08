@@ -40,6 +40,8 @@ runs:
       with:
         path: ~/.local/bin/goose
         key: goose-${{ inputs.version }}-${{ runner.os }}-${{ runner.arch }}
+        restore-keys: |
+          goose-${{ inputs.version }}-${{ runner.os }}-
 
     - name: Install Goose
       id: install
