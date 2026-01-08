@@ -117,6 +117,8 @@ jobs:
 
 **Unsafe Pattern:** AI analyzes git diffs directly → vulnerable to prompt injection.
 
+**Checksum Verification:** Checksum verification is not available for this action because the upstream [block/goose](https://github.com/block/goose) project does not publish checksums or cryptographic attestations with releases. See [block/goose#5994](https://github.com/block/goose/issues/5994) for SLSA attestations tracking.
+
 See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
 
 ## Security Patterns
