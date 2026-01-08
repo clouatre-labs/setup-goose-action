@@ -115,7 +115,7 @@ jobs:
       matrix:
         goose-version:
           # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
-          - '1.18.0'
+          - '1.19.1'
           # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
           - '1.15.0'
     steps:
