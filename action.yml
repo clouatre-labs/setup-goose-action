@@ -70,8 +70,8 @@ runs:
             exit 1
           fi
           
-          # Validate version format
-          if ! [[ "$LATEST_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          # Validate version format (supports pre-release tags like 1.20.0-beta)
+          if ! [[ "$LATEST_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.+)?$ ]]; then
             echo "::error::Invalid version format from API: '$LATEST_VERSION'"
             exit 1
           fi
@@ -101,10 +101,10 @@ runs:
         echo "::group::Installing Goose v$VERSION"
         mkdir -p ~/.local/bin
         
-        # Validate version format (semver: X.Y.Z)
+        # Validate version format (semver: X.Y.Z or X.Y.Z-prerelease)
         VERSION="${VERSION#v}"
-        if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "::error::Invalid version format: '$VERSION'. Expected semver (e.g., 1.19.1)"
+        if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.+)?$ ]]; then
+          echo "::error::Invalid version format: '$VERSION'. Expected semver (e.g., 1.19.1 or 1.20.0-beta)"
           exit 1
         fi
         

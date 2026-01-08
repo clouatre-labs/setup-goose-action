@@ -125,8 +125,8 @@ jobs:
           INSTALLED_VERSION="${{ steps.check-latest.outputs.goose-version }}"
           echo "Installed version: $INSTALLED_VERSION"
           
-          # Verify version format
-          if ! [[ "$INSTALLED_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          # Verify version format (supports pre-release tags)
+          if ! [[ "$INSTALLED_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.+)?$ ]]; then
             echo "::error::Invalid version format: '$INSTALLED_VERSION'"
             exit 1
           fi
