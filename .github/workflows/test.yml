@@ -17,6 +17,7 @@ permissions:
   contents: read
 
 env:
+  # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
   DEFAULT_GOOSE_VERSION: '1.15.0'
 
 jobs:
