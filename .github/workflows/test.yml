@@ -105,3 +105,32 @@ jobs:
         run: |
           VERSION=$(goose --version)
           echo "Installed: $VERSION"
+
+  test-check-latest:
+    name: Test check-latest input
+    if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Test with check-latest enabled
+        id: check-latest
+        uses: ./
+        with:
+          check-latest: true
+
+      - name: Verify latest version installed
+        run: |
+          INSTALLED_VERSION="${{ steps.check-latest.outputs.goose-version }}"
+          echo "Installed version: $INSTALLED_VERSION"
+          
+          # Verify version format (supports pre-release tags)
+          if ! [[ "$INSTALLED_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.+)?$ ]]; then
+            echo "::error::Invalid version format: '$INSTALLED_VERSION'"
+            exit 1
+          fi
+          
+          # Verify goose runs
+          goose --version
+          echo "✓ check-latest successfully installed version $INSTALLED_VERSION"

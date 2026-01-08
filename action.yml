@@ -14,11 +14,15 @@ inputs:
     description: 'Goose version to install (e.g., 1.14.0)'
     required: false
     default: '1.19.1'
+  check-latest:
+    description: 'Check for the latest available version that satisfies the version spec'
+    required: false
+    default: 'false'
 
 outputs:
   goose-version:
     description: 'Installed Goose version'
-    value: ${{ inputs.version }}
+    value: ${{ steps.resolve-version.outputs.version }}
   goose-path:
     description: 'Path to Goose binary directory'
     value: ${{ steps.setup-path.outputs.path }}
@@ -37,28 +41,68 @@ runs:
           exit 1
         fi
 
+    - name: Resolve version
+      id: resolve-version
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        VERSION="${{ inputs.version }}"
+        
+        if [ "${{ inputs.check-latest }}" = "true" ]; then
+          echo "::group::Checking for latest Goose version"
+          
+          # Query GitHub API for latest release using gh CLI
+          LATEST_TAG=$(gh api repos/block/goose/releases/latest --jq .tag_name)
+          
+          if [ $? -ne 0 ]; then
+            echo "::error::Failed to query GitHub API for latest release"
+            exit 1
+          fi
+          
+          # Remove 'v' prefix if present
+          LATEST_VERSION="${LATEST_TAG#v}"
+          
+          if [ -z "$LATEST_VERSION" ] || [ "$LATEST_VERSION" = "null" ]; then
+            echo "::error::Failed to extract latest version from GitHub API response"
+            exit 1
+          fi
+          
+          # Validate version format (supports pre-release tags like 1.20.0-beta)
+          if ! [[ "$LATEST_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.+)?$ ]]; then
+            echo "::error::Invalid version format from API: '$LATEST_VERSION'"
+            exit 1
+          fi
+          
+          echo "Latest version: $LATEST_VERSION"
+          VERSION="$LATEST_VERSION"
+          echo "::endgroup::"
+        fi
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
     - name: Cache Goose binary
       id: cache-goose
       uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5
       with:
         path: ~/.local/bin/goose
-        key: goose-${{ inputs.version }}-${{ runner.os }}-${{ runner.arch }}
+        key: goose-${{ steps.resolve-version.outputs.version }}-${{ runner.os }}-${{ runner.arch }}
         restore-keys: |
-          goose-${{ inputs.version }}-${{ runner.os }}-
+          goose-${{ steps.resolve-version.outputs.version }}-${{ runner.os }}-
 
     - name: Install Goose
       id: install
       if: steps.cache-goose.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        echo "::group::Installing Goose v${{ inputs.version }}"
+        VERSION="${{ steps.resolve-version.outputs.version }}"
+        echo "::group::Installing Goose v$VERSION"
         mkdir -p ~/.local/bin
         
-        # Validate version format (semver: X.Y.Z)
-        VERSION="${{ inputs.version }}"
+        # Validate version format (semver: X.Y.Z or X.Y.Z-prerelease)
         VERSION="${VERSION#v}"
-        if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "::error::Invalid version format: '$VERSION'. Expected semver (e.g., 1.19.1)"
+        if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.+)?$ ]]; then
+          echo "::error::Invalid version format: '$VERSION'. Expected semver (e.g., 1.19.1 or 1.20.0-beta)"
           exit 1
         fi
         
