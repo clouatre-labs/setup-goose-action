@@ -117,7 +117,7 @@ jobs:
         version:
           # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
           - '1.19.1'
-          # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
+          # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$ versioning=semver allowedVersions=<1.16.0
           - '1.15.0'
     steps:
       - name: Checkout
