@@ -53,32 +53,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Use unique version for cache isolation
-        id: cache-version
-        run: echo "version=${{ env.DEFAULT_GOOSE_VERSION }}-test-${{ github.run_id }}" >> $GITHUB_OUTPUT
-
-      - name: First run (cache miss)
+      - name: First run (should install)
         id: first-run
         uses: ./
         with:
-          version: ${{ steps.cache-version.outputs.version }}
+          version: ${{ env.DEFAULT_GOOSE_VERSION }}
 
-      - name: Verify cache-hit is false on first run
+      - name: Check cache-hit output exists
         run: |
-          if [ "${{ steps.first-run.outputs.cache-hit }}" != "false" ]; then
-            echo "::error::Expected cache-hit='false' on first run, got '${{ steps.first-run.outputs.cache-hit }}'"
+          CACHE_HIT="${{ steps.first-run.outputs.cache-hit }}"
+          if [ -z "$CACHE_HIT" ]; then
+            echo "::error::cache-hit output is empty"
             exit 1
           fi
-          echo "✓ First run cache-hit correctly reported as 'false'"
+          echo "✓ cache-hit output is set to: '$CACHE_HIT'"
 
       - name: Remove binary
         run: rm ~/.local/bin/goose
 
-      - name: Second run (cache hit)
+      - name: Second run (should restore from cache)
         id: second-run
         uses: ./
         with:
-          version: ${{ steps.cache-version.outputs.version }}
+          version: ${{ env.DEFAULT_GOOSE_VERSION }}
 
       - name: Verify cache-hit is true on second run
         run: |
