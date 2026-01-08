@@ -34,6 +34,12 @@ GitHub Action to install and cache [Goose AI agent](https://github.com/block/goo
 - uses: clouatre-labs/setup-goose-action@v1
   with:
     check-latest: true
+
+# Note: When check-latest is true, the version input is ignored
+- uses: clouatre-labs/setup-goose-action@v1
+  with:
+    version: '1.13.0'      # This is ignored
+    check-latest: true     # Latest release will be installed instead
 ```
 
 **Current default Goose version:** See [`action.yml`](action.yml#L9)
@@ -97,8 +103,16 @@ jobs:
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `version` | Goose version to install | No | See [`action.yml`](action.yml#L9) |
-| `check-latest` | Check for the latest available version that satisfies the version spec | No | `false` |
+| `version` | Goose version to install (ignored when `check-latest` is `true`) | No | See [`action.yml`](action.yml#L9) |
+| `check-latest` | Fetch and install the absolute latest Goose release (ignores `version` input) | No | `false` |
+
+### Version Resolution Behavior
+
+- **Default**: Uses the `version` input (or action default if not specified)
+- **With `check-latest: true`**: Fetches the absolute latest release from GitHub, ignoring the `version` input
+- **Future**: Version range support (e.g., `1.18.x`) is not currently implemented
+
+> **Note**: Unlike some setup actions, `check-latest` currently fetches the absolute latest release rather than the latest matching a version range. If you need a specific version, use the `version` input without `check-latest`.
 
 ## Outputs
 
