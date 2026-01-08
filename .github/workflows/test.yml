@@ -134,3 +134,4 @@ jobs:
           # Verify goose runs
           goose --version
           echo "✓ check-latest successfully installed version $INSTALLED_VERSION"
+

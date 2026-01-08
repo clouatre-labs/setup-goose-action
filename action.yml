@@ -11,11 +11,11 @@ keywords:
 
 inputs:
   version:
-    description: 'Goose version to install (e.g., 1.14.0)'
+    description: 'Version of Goose to install. Examples: 1.19.1, 1.15.0. Defaults to latest stable if unset. Ignored when check-latest is true.'
     required: false
     default: '1.19.1'
   check-latest:
-    description: 'Check for the latest available version that satisfies the version spec'
+    description: 'Fetch and install the absolute latest Goose release from GitHub. When true, the version input is ignored.'
     required: false
     default: 'false'
 

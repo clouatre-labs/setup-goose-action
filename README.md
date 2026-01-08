@@ -55,6 +55,17 @@ GitHub Action to install and cache [Goose AI agent](https://github.com/block/goo
 
 3. **Configure in your workflow** - map your secret to Goose's expected environment variable (see [Security Patterns](#security-patterns) below)
 
+## Permissions
+
+This action requires minimal permissions. Add the following to your workflow:
+
+```yaml
+permissions:
+  contents: read
+```
+
+This allows the action to checkout your repository. If using `check-latest: true`, GitHub API access is required (automatically available via `github.token`).
+
 ## Quick Start - Tier 1 (Maximum Security)
 
 ```yaml
