@@ -111,6 +111,7 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         goose-version: ['1.15.0', '1.16.0', '1.18.0', '1.19.0', '1.19.1']
     steps:
@@ -124,7 +125,12 @@ jobs:
 
       - name: Verify installation
         run: |
-          echo "Goose version: $(goose --version)"
+          INSTALLED=$(goose --version)
+          echo "Goose version: $INSTALLED"
+          if ! echo "$INSTALLED" | grep -q "${{ matrix.goose-version }}"; then
+            echo "::error::Expected version ${{ matrix.goose-version }}, but got $INSTALLED"
+            exit 1
+          fi
 
       - name: Test goose command
         run: |
