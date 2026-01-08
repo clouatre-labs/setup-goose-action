@@ -113,7 +113,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        goose-version: ['1.15.0', '1.16.0', '1.18.0', '1.19.0', '1.19.1']
+        goose-version:
+          # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
+          - '1.18.0'
+          # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
+          - '1.15.0'
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
