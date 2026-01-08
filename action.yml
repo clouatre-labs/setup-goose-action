@@ -13,7 +13,7 @@ inputs:
   version:
     description: 'Goose version to install (e.g., 1.14.0)'
     required: false
-    default: '1.18.0'
+    default: '1.19.1'
 
 outputs:
   goose-version:
