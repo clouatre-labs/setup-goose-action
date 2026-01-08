@@ -53,11 +53,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
+      - name: Use unique version for cache isolation
+        id: cache-version
+        run: echo "version=${{ env.DEFAULT_GOOSE_VERSION }}-test-${{ github.run_id }}" >> $GITHUB_OUTPUT
+
       - name: First run (cache miss)
         id: first-run
         uses: ./
         with:
-          version: ${{ env.DEFAULT_GOOSE_VERSION }}
+          version: ${{ steps.cache-version.outputs.version }}
 
       - name: Verify cache-hit is false on first run
         run: |
@@ -74,7 +78,7 @@ jobs:
         id: second-run
         uses: ./
         with:
-          version: ${{ env.DEFAULT_GOOSE_VERSION }}
+          version: ${{ steps.cache-version.outputs.version }}
 
       - name: Verify cache-hit is true on second run
         run: |
