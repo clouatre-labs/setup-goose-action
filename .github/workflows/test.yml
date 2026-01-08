@@ -54,17 +54,35 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
       - name: First run (cache miss)
+        id: first-run
         uses: ./
         with:
           version: ${{ env.DEFAULT_GOOSE_VERSION }}
+
+      - name: Verify cache-hit is false on first run
+        run: |
+          if [ "${{ steps.first-run.outputs.cache-hit }}" != "false" ]; then
+            echo "::error::Expected cache-hit='false' on first run, got '${{ steps.first-run.outputs.cache-hit }}'"
+            exit 1
+          fi
+          echo "✓ First run cache-hit correctly reported as 'false'"
 
       - name: Remove binary
         run: rm ~/.local/bin/goose
 
       - name: Second run (cache hit)
+        id: second-run
         uses: ./
         with:
           version: ${{ env.DEFAULT_GOOSE_VERSION }}
+
+      - name: Verify cache-hit is true on second run
+        run: |
+          if [ "${{ steps.second-run.outputs.cache-hit }}" != "true" ]; then
+            echo "::error::Expected cache-hit='true' on second run, got '${{ steps.second-run.outputs.cache-hit }}'"
+            exit 1
+          fi
+          echo "✓ Second run cache-hit correctly reported as 'true'"
 
       - name: Verify cache worked
         run: goose --version

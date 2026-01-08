@@ -100,6 +100,7 @@ jobs:
 |--------|-------------|
 | `goose-version` | Installed Goose version |
 | `goose-path` | Path to Goose binary directory |
+| `cache-hit` | Whether the Goose binary was restored from cache (`'true'` or `'false'`) |
 
 ## Examples
 
@@ -109,6 +110,32 @@ jobs:
 - uses: clouatre-labs/setup-goose-action@v1
   with:
     version: '1.14.0'
+```
+
+### Using cache-hit output
+
+Conditionally skip steps based on cache status:
+
+```yaml
+- name: Setup Goose
+  id: setup-goose
+  uses: clouatre-labs/setup-goose-action@v1
+  with:
+    version: '1.19.1'
+
+- name: Skip expensive operation if cached
+  if: steps.setup-goose.outputs.cache-hit == 'false'
+  run: |
+    # Only run on cache miss (first run or version change)
+    echo "Binary was freshly installed, running initialization..."
+    goose --version
+
+- name: Use cached binary
+  if: steps.setup-goose.outputs.cache-hit == 'true'
+  run: |
+    # Binary was restored from cache
+    echo "Binary restored from cache, skipping initialization"
+    goose --version
 ```
 
 ## Security

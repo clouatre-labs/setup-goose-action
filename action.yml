@@ -22,6 +22,9 @@ outputs:
   goose-path:
     description: 'Path to Goose binary directory'
     value: ${{ steps.setup-path.outputs.path }}
+  cache-hit:
+    description: 'Whether the Goose binary was restored from cache'
+    value: ${{ steps.cache-goose.outputs.cache-hit }}
 
 runs:
   using: 'composite'
