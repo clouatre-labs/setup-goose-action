@@ -54,6 +54,14 @@ runs:
         echo "::group::Installing Goose v${{ inputs.version }}"
         mkdir -p ~/.local/bin
         
+        # Validate version format (semver: X.Y.Z)
+        VERSION="${{ inputs.version }}"
+        VERSION="${VERSION#v}"
+        if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "::error::Invalid version format: '$VERSION'. Expected semver (e.g., 1.19.1)"
+          exit 1
+        fi
+        
         # Determine architecture
         ARCH="${{ runner.arch }}"
         if [ "$ARCH" = "X64" ]; then
@@ -66,10 +74,27 @@ runs:
         fi
         
         # Download and extract
-        DOWNLOAD_URL="https://github.com/block/goose/releases/download/v${{ inputs.version }}/goose-${GOOSE_ARCH}-unknown-linux-gnu.tar.bz2"
+        DOWNLOAD_URL="https://github.com/block/goose/releases/download/v$VERSION/goose-${GOOSE_ARCH}-unknown-linux-gnu.tar.bz2"
         echo "Downloading from: $DOWNLOAD_URL"
         
-        curl -fsSL "$DOWNLOAD_URL" | tar -xj -C ~/.local/bin
+        TEMP_TAR=$(mktemp)
+        trap "rm -f $TEMP_TAR" EXIT
+        
+        if ! curl -fsSL "$DOWNLOAD_URL" -o "$TEMP_TAR"; then
+          echo "::error::Failed to download Goose. Check version and network."
+          exit 1
+        fi
+        
+        if [ ! -s "$TEMP_TAR" ]; then
+          echo "::error::Downloaded file is empty. Version $VERSION may not exist."
+          exit 1
+        fi
+        
+        if ! tar -xj -C ~/.local/bin -f "$TEMP_TAR"; then
+          echo "::error::Failed to extract Goose binary."
+          exit 1
+        fi
+        
         chmod +x ~/.local/bin/goose
         
         echo "::endgroup::"
