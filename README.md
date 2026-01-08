@@ -1,70 +1,37 @@
 # Setup Goose Action
 
-[![Test Action](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg)](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml)
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github)](https://github.com/marketplace/actions/setup-goose-cli)
-[![Security Policy](https://img.shields.io/badge/Security-Policy-blue?logo=github)](SECURITY.md)
-[![Composite Action](https://img.shields.io/badge/Composite-Action-green?logo=github)](https://docs.github.com/en/actions/creating-actions/about-custom-actions#composite-actions)
+[![Test](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg)](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Latest Release](https://img.shields.io/github/v/release/clouatre-labs/setup-goose-action)](https://github.com/clouatre-labs/setup-goose-action/releases/latest)
 
-GitHub Action to install and cache [Goose AI agent](https://github.com/block/goose) for use in workflows.
+Install and cache [Goose AI agent](https://github.com/block/goose) in GitHub Actions workflows.
 
-**Available on the [GitHub Marketplace](https://github.com/marketplace/actions/setup-goose-cli)**
-
-> [!IMPORTANT]
-> **Prompt Injection Risk:** When AI analyzes user-controlled input (git diffs, code comments, commit messages), malicious actors can embed instructions to manipulate output. This applies to ANY AI tool, not just Goose or this action.
->
-> For production use, see [Security Patterns](#security-patterns) below for three defensive tiers (tool output analysis, manual approval, trusted-only execution).
+> [!WARNING]
+> AI analyzing user-controlled input (diffs, comments, commits) is vulnerable to prompt injection. See [Security Patterns](#security-patterns).
 
 ## Usage
 
 ```yaml
-# Recommended: Get latest v1.x updates automatically
+# Recommended
 - uses: clouatre-labs/setup-goose-action@v1
 
-# Conservative: Pin to exact version
-- uses: clouatre-labs/setup-goose-action@v1.0.3
-
-# Custom Goose version
+# Pin to specific version
 - uses: clouatre-labs/setup-goose-action@v1
   with:
-    version: '1.13.0'
+    version: '1.19.1'
 
-# Always use latest Goose release
+# Always use latest release
 - uses: clouatre-labs/setup-goose-action@v1
   with:
     check-latest: true
-
-# Note: When check-latest is true, the version input is ignored
-- uses: clouatre-labs/setup-goose-action@v1
-  with:
-    version: '1.13.0'      # This is ignored
-    check-latest: true     # Latest release will be installed instead
 ```
 
-**Current default Goose version:** See [`action.yml`](action.yml#L9)
+Default version: `1.19.1` (see [`action.yml`](action.yml#L16))
 
 ## Prerequisites
 
-1. **Get an API key** from your chosen provider: [Supported Providers](https://block.github.io/goose/docs/getting-started/providers/)
-
-2. **Add it as a repository secret:**
-   - Go to **Settings → Secrets and variables → Actions**
-   - Click **New repository secret**
-   - Name it (e.g., `GEMINI_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)
-
-3. **Configure in your workflow** - map your secret to Goose's expected environment variable (see [Security Patterns](#security-patterns) below)
-
-## Permissions
-
-This action requires minimal permissions. Add the following to your workflow:
-
-```yaml
-permissions:
-  contents: read
-```
-
-This allows the action to checkout your repository. If using `check-latest: true`, GitHub API access is required (automatically available via `github.token`).
+1. Get API key from [supported provider](https://block.github.io/goose/docs/getting-started/providers/)
+2. Add as repository secret: **Settings → Secrets and variables → Actions**
+3. Map secret to environment variable in workflow (see examples below)
 
 ## Quick Start - Tier 1 (Maximum Security)
 
@@ -110,166 +77,53 @@ jobs:
           path: analysis.md
 ```
 
-## Inputs
+## Inputs & Outputs
 
-| Input | Description | Required | Default |
-|-------|-------------|----------|---------|
-| `version` | Goose version to install (ignored when `check-latest` is `true`) | No | See [`action.yml`](action.yml#L9) |
-| `check-latest` | Fetch and install the absolute latest Goose release (ignores `version` input) | No | `false` |
-
-### Version Resolution Behavior
-
-- **Default**: Uses the `version` input (or action default if not specified)
-- **With `check-latest: true`**: Fetches the absolute latest release from GitHub, ignoring the `version` input
-- **Future**: Version range support (e.g., `1.18.x`) is not currently implemented
-
-> **Note**: Unlike some setup actions, `check-latest` currently fetches the absolute latest release rather than the latest matching a version range. If you need a specific version, use the `version` input without `check-latest`.
-
-## Outputs
+| Input | Description | Default |
+|-------|-------------|---------|
+| `version` | Goose version (ignored if `check-latest: true`) | `1.19.1` |
+| `check-latest` | Install latest release (ignores `version`) | `false` |
 
 | Output | Description |
 |--------|-------------|
-| `goose-version` | Installed Goose version |
-| `goose-path` | Path to Goose binary directory |
-| `cache-hit` | Whether the Goose binary was restored from cache (`'true'` or `'false'`) |
-
-## Examples
-
-### Pin to Specific Version
-
-```yaml
-- uses: clouatre-labs/setup-goose-action@v1
-  with:
-    version: '1.14.0'
-```
-
-### Using cache-hit output
-
-Conditionally skip steps based on cache status:
-
-```yaml
-- name: Setup Goose
-  id: setup-goose
-  uses: clouatre-labs/setup-goose-action@v1
-  with:
-    version: '1.19.1'
-
-- name: Skip expensive operation if cached
-  if: steps.setup-goose.outputs.cache-hit == 'false'
-  run: |
-    # Only run on cache miss (first run or version change)
-    echo "Binary was freshly installed, running initialization..."
-    goose --version
-
-- name: Use cached binary
-  if: steps.setup-goose.outputs.cache-hit == 'true'
-  run: |
-    # Binary was restored from cache
-    echo "Binary restored from cache, skipping initialization"
-    goose --version
-```
-
-## Security
-
-**Safe Pattern:** AI analyzes tool output (ruff, trivy, semgrep), not raw code.
-
-**Unsafe Pattern:** AI analyzes git diffs directly → vulnerable to prompt injection.
-
-**Checksum Verification:** Checksum verification is not available for this action because the upstream [block/goose](https://github.com/block/goose) project does not publish checksums or cryptographic attestations with releases. See [block/goose#5994](https://github.com/block/goose/issues/5994) for SLSA attestations tracking.
-
-See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
+| `goose-version` | Installed version |
+| `goose-path` | Binary directory path |
+| `cache-hit` | `'true'` if restored from cache |
 
 ## Security Patterns
 
-This action supports three security tiers for AI-augmented CI/CD:
+Three defensive tiers for AI-augmented CI/CD:
 
-- **Tier 1 (Maximum Security)**: AI analyzes only tool output (JSON), never raw code. [See workflow](examples/tier1-maximum-security.yml)
-- **Tier 2**: AI sees file stats, requires manual approval. [See workflow](examples/tier2-moderate-security.yml)
-- **Tier 3**: Full diff analysis, trusted teams only. [See workflow](examples/tier3-full-context.yml)
+- **Tier 1**: AI analyzes tool output only (JSON from ruff/trivy/semgrep) - [example](examples/tier1-maximum-security.yml)
+- **Tier 2**: AI sees file stats, requires manual approval - [example](examples/tier2-balanced-security.yml)
+- **Tier 3**: Full diff analysis, trusted contributors only - [example](examples/tier3-advanced-patterns.yml)
 
-Read the full explanation: [AI-Augmented CI/CD blog post](https://clouatre.ca/posts/ai-augmented-cicd)
+**Safe:** AI analyzes structured tool output  
+**Unsafe:** AI analyzes raw diffs (prompt injection risk)
 
-## Features
+**Checksums:** Not available - upstream [block/goose](https://github.com/block/goose) doesn't publish them ([tracking issue](https://github.com/block/goose/issues/5994))
 
-- **Caching**: Automatically caches Goose binary for faster subsequent runs
-- **Version Pinning**: Install specific Goose versions for reproducible builds
-- **Lightweight**: Composite action with no external dependencies
+Report vulnerabilities: [SECURITY.md](SECURITY.md)
 
-## Supported Platforms
+## Platform Support
 
-| OS | Architecture | Status |
-|----|--------------|--------|
-| Ubuntu | x64 | Supported |
-| Ubuntu | arm64 | Supported |
-| macOS | - | Not supported |
-| Windows | - | Not supported |
+| OS | Arch | Status |
+|----|------|--------|
+| Linux | x64, arm64 | ✅ |
+| macOS, Windows | - | ❌ |
 
-> **Note:** This action only supports Linux runners. macOS runners have a 10x billing multiplier on GitHub Actions, and there's no practical use case for running Goose on macOS in CI (Goose executes prompts and tool calls, nothing platform-specific).
+Linux-only by design (10x cost multiplier for macOS runners, no platform-specific use case)
 
 ## How It Works
 
-1. Checks cache for Goose binary matching the specified version and platform
-2. If cache miss, downloads Goose binary from official GitHub releases
-3. Extracts binary to `~/.local/bin/goose`
-4. Adds binary location to `$GITHUB_PATH`
-5. Verifies installation with `goose --version`
-
-## Cache Key Format
-
-```
-goose-{version}-{os}-{arch}
-```
-
-Example: `goose-1.12.1-Linux-X64`
-
-## Troubleshooting
-
-### Binary not found after installation
-
-Ensure you're using the action before attempting to run `goose`:
-
-```yaml
-- uses: clouatre-labs/setup-goose-action@v1
-- run: goose --version  # This will work
-```
-
-### Unsupported version
-
-Check available versions at [Goose Releases](https://github.com/block/goose/releases). Ensure the version exists and has pre-built binaries.
-
-### Cache not working
-
-The cache key includes OS and architecture. If you change runners or platforms, a new cache entry will be created. This is expected behavior.
-
-## Development
-
-This is a composite action (YAML-based) with no compilation required.
-
-### Testing Locally
-
-```bash
-# Test in a workflow
-git clone https://github.com/clouatre-labs/setup-goose-action
-cd setup-goose-action
-
-# Create a test workflow in .github/workflows/test.yml
-# Push and verify the action works
-```
-
-## Contributing
-
-Contributions are welcome! Please open an issue or PR.
+1. Check cache: `goose-{version}-{os}-{arch}`
+2. Download from [GitHub releases](https://github.com/block/goose/releases) on cache miss
+3. Extract to `~/.local/bin/goose`
+4. Add to `$GITHUB_PATH`
+5. Verify with `goose --version`
 
 ## License
 
 MIT - See [LICENSE](LICENSE)
 
-## Related
-
-- [Goose](https://github.com/block/goose) - Official Goose repository
-- [Goose Documentation](https://block.github.io/goose/)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-
-## Acknowledgments
-
-Built by [clouatre-labs](https://github.com/clouatre-labs) for the Goose community. Not officially affiliated with Block or the Goose project.
+Not affiliated with Block or the Goose project.
