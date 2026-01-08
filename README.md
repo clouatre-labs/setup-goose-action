@@ -25,7 +25,7 @@ Install and cache [Goose AI agent](https://github.com/block/goose) in GitHub Act
     check-latest: true
 ```
 
-Default version: `1.19.1` (see [`action.yml`](action.yml#L16))
+Default version: See [`action.yml`](action.yml#L16)
 
 ## Prerequisites
 
@@ -81,7 +81,7 @@ jobs:
 
 | Input | Description | Default |
 |-------|-------------|---------|
-| `version` | Goose version (ignored if `check-latest: true`) | `1.19.1` |
+| `version` | Goose version (ignored if `check-latest: true`) | See [action.yml](action.yml#L16) |
 | `check-latest` | Install latest release (ignores `version`) | `false` |
 
 | Output | Description |
