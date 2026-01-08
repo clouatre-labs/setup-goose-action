@@ -106,14 +106,14 @@ jobs:
           VERSION=$(goose --version)
           echo "Installed: $VERSION"
 
-  test-versions:
-    name: Test multiple versions
+  test-version-matrix:
+    name: Test version ${{ matrix.version }}
     if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        goose-version:
+        version:
           # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
           - '1.19.1'
           # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
@@ -122,17 +122,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Test action with version ${{ matrix.goose-version }}
+      - name: Test action
         uses: ./
         with:
-          version: ${{ matrix.goose-version }}
+          version: ${{ matrix.version }}
 
       - name: Verify installation
         run: |
           INSTALLED=$(goose --version)
           echo "Goose version: $INSTALLED"
-          if ! echo "$INSTALLED" | grep -q "${{ matrix.goose-version }}"; then
-            echo "::error::Expected version ${{ matrix.goose-version }}, but got $INSTALLED"
+          if ! echo "$INSTALLED" | grep -q "${{ matrix.version }}"; then
+            echo "::error::Expected version ${{ matrix.version }}, but got $INSTALLED"
             exit 1
           fi
 
