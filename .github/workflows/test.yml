@@ -106,6 +106,31 @@ jobs:
           VERSION=$(goose --version)
           echo "Installed: $VERSION"
 
+  test-versions:
+    name: Test multiple versions
+    if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goose-version: ['1.15.0', '1.16.0', '1.18.0', '1.19.0', '1.19.1']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Test action with version ${{ matrix.goose-version }}
+        uses: ./
+        with:
+          version: ${{ matrix.goose-version }}
+
+      - name: Verify installation
+        run: |
+          echo "Goose version: $(goose --version)"
+
+      - name: Test goose command
+        run: |
+          which goose
+          goose --help
+
   test-check-latest:
     name: Test check-latest input
     if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
