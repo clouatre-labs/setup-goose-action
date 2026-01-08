@@ -58,7 +58,7 @@ runs:
         VERSION="${{ inputs.version }}"
         VERSION="${VERSION#v}"
         if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "::error::Invalid version format: '$VERSION'. Expected semver format (e.g., 1.19.1)"
+          echo "::error::Invalid version format: '$VERSION'. Expected semver (e.g., 1.19.1)"
           exit 1
         fi
         
@@ -73,29 +73,25 @@ runs:
           exit 1
         fi
         
-        # Download and extract with explicit error handling
+        # Download and extract
         DOWNLOAD_URL="https://github.com/block/goose/releases/download/v$VERSION/goose-${GOOSE_ARCH}-unknown-linux-gnu.tar.bz2"
         echo "Downloading from: $DOWNLOAD_URL"
         
-        # Create temporary file for download
         TEMP_TAR=$(mktemp)
         trap "rm -f $TEMP_TAR" EXIT
         
-        # Download with explicit error checking
         if ! curl -fsSL "$DOWNLOAD_URL" -o "$TEMP_TAR"; then
-          echo "::error::Failed to download Goose from $DOWNLOAD_URL. Check version and network connectivity."
+          echo "::error::Failed to download Goose. Check version and network."
           exit 1
         fi
         
-        # Verify downloaded file exists and has content
-        if [ ! -f "$TEMP_TAR" ] || [ ! -s "$TEMP_TAR" ]; then
-          echo "::error::Downloaded file is empty or missing. The release may not exist for version $VERSION."
+        if [ ! -s "$TEMP_TAR" ]; then
+          echo "::error::Downloaded file is empty. Version $VERSION may not exist."
           exit 1
         fi
         
-        # Extract with explicit error handling
         if ! tar -xj -C ~/.local/bin -f "$TEMP_TAR"; then
-          echo "::error::Failed to extract Goose binary. The downloaded file may be corrupted."
+          echo "::error::Failed to extract Goose binary."
           exit 1
         fi
         
