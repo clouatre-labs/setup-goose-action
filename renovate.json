@@ -24,5 +24,6 @@
       "matchManagers": ["github-actions"],
       "automerge": true
     }
-  ]
+  ],
+  "dependencyDashboard": false
 }
