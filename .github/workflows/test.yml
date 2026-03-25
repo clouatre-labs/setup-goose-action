@@ -46,47 +46,53 @@ jobs:
           which goose
           goose --help
 
-  test-cache:
-    name: Test caching
+  test-cache-install:
+    name: Test caching (install)
     if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - name: First run (should install)
-        id: first-run
+      - name: Install (cache miss expected)
+        id: install
         uses: ./
         with:
           version: ${{ env.DEFAULT_GOOSE_VERSION }}
 
-      - name: Check cache-hit output exists
+      - name: Verify cache-hit output is set
         run: |
-          CACHE_HIT="${{ steps.first-run.outputs.cache-hit }}"
-          if [ -z "$CACHE_HIT" ]; then
-            echo "::error::cache-hit output is empty"
+          CACHE_HIT="${{ steps.install.outputs.cache-hit }}"
+          if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ]; then
+            echo "::error::cache-hit must be 'true' or 'false', got '$CACHE_HIT'"
             exit 1
           fi
-          echo "✓ cache-hit output is set to: '$CACHE_HIT'"
+          echo "✓ cache-hit output is '$CACHE_HIT'"
 
-      - name: Remove binary
-        run: rm ~/.local/bin/goose
+  test-cache-restore:
+    name: Test caching (restore)
+    needs: test-cache-install
+    if: github.event_name == 'push' || github.event.pull_request.draft == false || github.event_name == 'merge_group'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - name: Second run (should restore from cache)
-        id: second-run
+      - name: Restore (cache hit expected)
+        id: restore
         uses: ./
         with:
           version: ${{ env.DEFAULT_GOOSE_VERSION }}
 
-      - name: Verify cache-hit is true on second run
+      - name: Verify cache-hit is true on restore
         run: |
-          if [ "${{ steps.second-run.outputs.cache-hit }}" != "true" ]; then
-            echo "::error::Expected cache-hit='true' on second run, got '${{ steps.second-run.outputs.cache-hit }}'"
+          if [ "${{ steps.restore.outputs.cache-hit }}" != "true" ]; then
+            echo "::error::Expected cache-hit='true' on restore, got '${{ steps.restore.outputs.cache-hit }}'"
             exit 1
           fi
-          echo "✓ Second run cache-hit correctly reported as 'true'"
+          echo "✓ cache-hit correctly reported as 'true' on restore"
 
-      - name: Verify cache worked
+      - name: Verify binary works after cache restore
         run: goose --version
 
   test-version:
