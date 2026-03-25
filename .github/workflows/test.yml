@@ -155,6 +155,7 @@ jobs:
         with:
           advanced-security: false
           annotations: true
+          min-severity: error
 
   ci-result:
     name: CI Result
