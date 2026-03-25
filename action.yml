@@ -28,7 +28,7 @@ outputs:
     value: ${{ steps.setup-path.outputs.path }}
   cache-hit:
     description: 'Whether the Goose binary was restored from cache'
-    value: ${{ steps.cache-goose.outputs.cache-hit }}
+    value: ${{ steps.cache-goose.outputs.cache-hit == 'true' && 'true' || 'false' }}
 
 runs:
   using: 'composite'
