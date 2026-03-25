@@ -46,10 +46,10 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
-      run: |
-        VERSION="${{ inputs.version }}"  # zizmor: ignore[template-injection]
+      run: | # zizmor: ignore[template-injection]
+        VERSION="${{ inputs.version }}"
         
-        if [ "${{ inputs.check-latest }}" = "true" ]; then  # zizmor: ignore[template-injection]
+        if [ "${{ inputs.check-latest }}" = "true" ]; then
           echo "::group::Checking for latest Goose version"
           
           # Query GitHub API for latest release using gh CLI
@@ -146,8 +146,8 @@ runs:
     - name: Setup PATH
       id: setup-path
       shell: bash
-      run: |
-        echo "$HOME/.local/bin" >> $GITHUB_PATH  # zizmor: ignore[dangerous-write]
+      run: | # zizmor: ignore[github-env]
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
         echo "path=$HOME/.local/bin" >> $GITHUB_OUTPUT
 
     - name: Verify installation
