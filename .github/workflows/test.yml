@@ -26,7 +26,7 @@ jobs:
   test-ubuntu:
     name: Test on Ubuntu
     if: github.event_name == 'push' || github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -51,7 +51,7 @@ jobs:
   test-cache-install:
     name: Test caching (install)
     if: github.event_name == 'push' || github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -75,7 +75,7 @@ jobs:
     name: Test caching (restore)
     needs: test-cache-install
     if: github.event_name == 'push' || github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -100,7 +100,7 @@ jobs:
   test-version:
     name: Test different version
     if: github.event_name == 'push' || github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -118,7 +118,7 @@ jobs:
   test-check-latest:
     name: Test check-latest input
     if: github.event_name == 'push' || github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
