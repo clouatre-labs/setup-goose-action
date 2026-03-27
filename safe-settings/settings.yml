@@ -1,0 +1,101 @@
+# Org-wide repository settings enforced by Safe Settings
+# Changes to this file trigger a sync via GitHub Actions workflow.
+# Per-repo overrides: create .github/settings.yml in the target repo.
+
+repository:
+  has_wiki: false
+  has_projects: false
+  has_discussions: false
+  delete_branch_on_merge: true
+  allow_auto_merge: true
+  allow_squash_merge: true
+  allow_merge_commit: false
+  allow_rebase_merge: false
+  squash_merge_commit_title: COMMIT_OR_PR_TITLE
+  squash_merge_commit_message: COMMIT_MESSAGES
+
+labels:
+  # --- Standard GitHub labels ---
+  - name: bug
+    color: "d73a4a"
+    description: "Something isn't working"
+  - name: documentation
+    color: "0075ca"
+    description: "Improvements or additions to documentation"
+  - name: duplicate
+    color: "cfd3d7"
+    description: "This issue or pull request already exists"
+  - name: enhancement
+    color: "a2eeef"
+    description: "New feature or request"
+  - name: good first issue
+    color: "7057ff"
+    description: "Good for newcomers"
+  - name: help wanted
+    color: "008672"
+    description: "Extra attention is needed"
+  - name: invalid
+    color: "e4e669"
+    description: "This doesn't seem right"
+  - name: question
+    color: "d876e3"
+    description: "Further information is requested"
+  - name: wontfix
+    color: "ffffff"
+    description: "This will not be worked on"
+  # --- Workflow labels ---
+  - name: refactor
+    color: "c5def5"
+    description: "Code refactoring without behavior change"
+  - name: dependencies
+    color: "0366d6"
+    description: "Dependency updates"
+  - name: breaking-change
+    color: "ff0000"
+    description: "Breaking change in API or behavior"
+  - name: security
+    color: "d93f0b"
+    description: "Security improvements and vulnerability fixes"
+  - name: ci
+    color: "ededed"
+    description: "CI/CD pipeline changes"
+  - name: chore
+    color: "ededed"
+    description: "Maintenance tasks"
+  - name: performance
+    color: "ededed"
+    description: "Performance improvements"
+  - name: testing
+    color: "ededed"
+    description: "Test improvements"
+  - name: maintenance
+    color: "ededed"
+    description: "General maintenance"
+  - name: distribution
+    color: "2ea44f"
+    description: "Packaging and distribution channels"
+  - name: skip-integration
+    color: "fbca04"
+    description: "Skip integration tests for this PR"
+  # --- Priority labels ---
+  - name: p1
+    color: "ff9500"
+    description: "Priority 1 - Critical"
+  - name: p2
+    color: "fbca04"
+    description: "Priority 2 - Medium"
+  - name: p3
+    color: "0e8a16"
+    description: "Priority 3 - Nice to have"
+  # --- Governance labels ---
+  - name: epic
+    color: "3E4B9E"
+    description: "Epic tracking issue"
+  - name: governance
+    color: "006B75"
+    description: "Org governance and standards"
+  - name: infrastructure
+    color: "D4C5F9"
+    description: "Infrastructure and tooling"
+  # Repo-specific labels (e.g. aptu's cli, ios, mcp, rust) are NOT included here.
+  # They should be defined in per-repo overrides via .github/settings.yml in each repo.

@@ -1,0 +1,35 @@
+name: Safe Settings Sync
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  push:
+    branches: [master]
+    paths:
+      - 'safe-settings/**'
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      SAFE_SETTINGS_VERSION: "2.1.17"
+      SAFE_SETTINGS_CODE_DIR: ${{ github.workspace }}/.safe-settings-code
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: github/safe-settings
+          ref: ${{ env.SAFE_SETTINGS_VERSION }}
+          path: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+      - uses: actions/setup-node@v4
+      - run: npm install
+        working-directory: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+      - run: npm run full-sync
+        working-directory: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+        env:
+          GH_ORG: clouatre-labs
+          APP_ID: ${{ vars.ORG_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.ORG_APP_PRIVATE_KEY }}
+          ADMIN_REPO: .github
+          CONFIG_PATH: safe-settings
