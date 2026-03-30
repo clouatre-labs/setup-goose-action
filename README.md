@@ -61,25 +61,25 @@ permissions:
 
 jobs:
   analyze:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
       - name: Lint Code
         run: pipx run ruff check --output-format=json . > lint-results.json || true
 
       - name: Setup Goose CLI
-        uses: clouatre-labs/setup-goose-action@v1
+        uses: clouatre-labs/setup-goose-action@35f35c3a8f08aa333486693114938ec643bf8310  # v1.0.7
 
       - name: AI Analysis
         env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           mkdir -p ~/.config/goose
           cat > ~/.config/goose/config.yaml << 'EOF'
-          GOOSE_PROVIDER: google
-          GOOSE_MODEL: gemini-2.5-flash
+          GOOSE_PROVIDER: openrouter
+          GOOSE_MODEL: inception/mercury-2
           keyring: false
           EOF
           
@@ -88,7 +88,7 @@ jobs:
           goose run --instructions prompt.txt --no-session --quiet > analysis.md
 
       - name: Upload Analysis Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           name: ai-analysis
           path: analysis.md
