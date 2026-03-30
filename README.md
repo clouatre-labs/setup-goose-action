@@ -1,14 +1,13 @@
 # Setup Goose Action
 
-[![Test Action](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg)](https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml)
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github)](https://github.com/marketplace/actions/setup-goose-cli)
-[![Security Policy](https://img.shields.io/badge/Security-Policy-blue?logo=github)](SECURITY.md)
-[![Composite Action](https://img.shields.io/badge/Composite-Action-green?logo=github)](https://docs.github.com/en/actions/creating-actions/about-custom-actions#composite-actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Latest Release](https://img.shields.io/github/v/release/clouatre-labs/setup-goose-action)](https://github.com/clouatre-labs/setup-goose-action/releases/latest)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/11555/badge)](https://www.bestpractices.dev/projects/11555)
+<p align="center">
+  <a href="https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml"><img alt="CI" src="https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg"></a>
+  <a href="https://github.com/marketplace/actions/setup-goose-cli"><img alt="GitHub Marketplace" src="https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
+  <a href="https://www.bestpractices.dev/projects/11555"><img alt="OpenSSF Best Practices" src="https://www.bestpractices.dev/projects/11555/badge"></a>
+</p>
 
-A GitHub Action that installs and caches the [Goose AI agent](https://github.com/block/goose) for CI/CD workflows. Goose is an open-source AI coding agent by Block. This composite action downloads the binary, caches it across runs, and adds it to `PATH`.
+<p align="center">A GitHub Action that installs and caches the <a href="https://github.com/block/goose">Goose AI agent</a> for CI/CD workflows. OpenSSF silver certified: fewer than 0.8% of open source projects reach this level.</p>
 
 **Available on the [GitHub Marketplace](https://github.com/marketplace/actions/setup-goose-cli)**
 
