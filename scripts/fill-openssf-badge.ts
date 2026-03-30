@@ -724,34 +724,38 @@ const SKIP_IDS = new Set([
 ]);
 
 // Passing-ONLY criterion IDs (level 0 only -- NOT re-presented on the silver form).
-// Criteria that appear on BOTH forms are intentionally excluded here so silverAnswers() picks them up.
-// Mirror the reference set from code-analyze-mcp exactly, minus criteria not on the passing form.
+// Derived directly from criteria/criteria.yml level '0', minus DUAL_IDS.
 const PASSING_ONLY_IDS = new Set([
+  // Basics
   "description_good", "interact", "contribution",
   "floss_license", "floss_license_osi", "license_location",
   "documentation_basics", "documentation_interface", "sites_https",
-  "discussion", "english", "maintained", "repo_public", "repo_track",
-  "repo_interim", "repo_distributed", "version_unique", "version_semver",
-  "version_tags", "release_notes", "release_notes_vulns",
+  "discussion", "english", "maintained",
+  // Change Control
+  "repo_public", "repo_track", "repo_interim", "repo_distributed",
+  "version_unique", "version_semver", "version_tags",
+  "release_notes", "release_notes_vulns",
+  // Reporting
   "report_process", "report_responses",
   "enhancement_responses", "report_archive",
   "vulnerability_report_process", "vulnerability_report_private",
   "vulnerability_report_response",
+  // Quality
   "build", "build_common_tools", "build_floss_tools",
   "test", "test_invocation", "test_most", "test_continuous_integration",
   "test_policy", "tests_are_added",
   "warnings", "warnings_fixed",
   "know_secure_design", "know_common_errors",
+  // Security
   "crypto_published", "crypto_call", "crypto_floss", "crypto_keylength",
   "crypto_working", "crypto_pfs",
   "crypto_password_storage", "crypto_random",
   "delivery_mitm", "delivery_unsigned",
-  "vulnerabilities_critical_fixed", "vulnerabilities_critical_fixed_rapid",
-  "vulnerabilities_fixed_60_days",
+  "vulnerabilities_fixed_60_days", "vulnerabilities_critical_fixed",
   "no_leaked_credentials",
+  // Analysis
   "static_analysis", "static_analysis_fixed", "static_analysis_often",
   "dynamic_analysis", "dynamic_analysis_enable_assertions", "dynamic_analysis_fixed",
-  "report_url",
 ]);
 
 // Criteria that appear on BOTH passing and silver forms.
@@ -776,6 +780,114 @@ function silverAnswers(): Answer[] {
     (a) => !PASSING_ONLY_IDS.has(a.id) && !SKIP_IDS.has(a.id) && a.status !== "?"
   );
 }
+
+// Passing form section structure (matches _form_0.html.erb accordion order, criteria from criteria.yml level 0).
+// Each section has a Save-and-Continue button; must be submitted section-by-section.
+const PASSING_SECTIONS: Array<{ name: string; continueValue: string; ids: string[] }> = [
+  {
+    name: "Basics",
+    continueValue: "changecontrol",
+    ids: [
+      "description_good",
+      "interact",
+      "contribution",
+      "contribution_requirements",
+      "floss_license",
+      "floss_license_osi",
+      "license_location",
+      "documentation_basics",
+      "documentation_interface",
+      "sites_https",
+      "discussion",
+      "english",
+      "maintained",
+    ],
+  },
+  {
+    name: "Change Control",
+    continueValue: "reporting",
+    ids: [
+      "repo_public",
+      "repo_track",
+      "repo_interim",
+      "repo_distributed",
+      "version_unique",
+      "version_semver",
+      "version_tags",
+      "release_notes",
+      "release_notes_vulns",
+    ],
+  },
+  {
+    name: "Reporting",
+    continueValue: "quality",
+    ids: [
+      "report_process",
+      "report_tracker",
+      "report_responses",
+      "enhancement_responses",
+      "report_archive",
+      "vulnerability_report_process",
+      "vulnerability_report_private",
+      "vulnerability_report_response",
+    ],
+  },
+  {
+    name: "Quality",
+    continueValue: "security",
+    ids: [
+      "build",
+      "build_common_tools",
+      "build_floss_tools",
+      "test",
+      "test_invocation",
+      "test_most",
+      "test_continuous_integration",
+      "test_policy",
+      "tests_are_added",
+      "tests_documented_added",
+      "warnings",
+      "warnings_fixed",
+      "warnings_strict",
+    ],
+  },
+  {
+    name: "Security",
+    continueValue: "analysis",
+    ids: [
+      "know_secure_design",
+      "know_common_errors",
+      "crypto_published",
+      "crypto_call",
+      "crypto_floss",
+      "crypto_keylength",
+      "crypto_working",
+      "crypto_weaknesses",
+      "crypto_pfs",
+      "crypto_password_storage",
+      "crypto_random",
+      "delivery_mitm",
+      "delivery_unsigned",
+      "vulnerabilities_fixed_60_days",
+      "vulnerabilities_critical_fixed",
+      "no_leaked_credentials",
+    ],
+  },
+  {
+    name: "Analysis",
+    continueValue: "Save",
+    ids: [
+      "static_analysis",
+      "static_analysis_common_vulnerabilities",
+      "static_analysis_fixed",
+      "static_analysis_often",
+      "dynamic_analysis",
+      "dynamic_analysis_unsafe",
+      "dynamic_analysis_enable_assertions",
+      "dynamic_analysis_fixed",
+    ],
+  },
+];
 
 // Silver form section structure (matches _form_1.html.erb accordion order).
 const SILVER_SECTIONS: Array<{ name: string; continueValue: string; ids: string[] }> = [
@@ -927,6 +1039,33 @@ async function saveAndContinue(page: Page, continueValue: string): Promise<void>
   await page.waitForTimeout(600);
 }
 
+async function fillPassingBySection(page: Page, allAnswers: Answer[]): Promise<void> {
+  const answerMap = new Map<string, Answer>(allAnswers.map((a) => [a.id, a]));
+
+  for (let i = 0; i < PASSING_SECTIONS.length; i++) {
+    const section = PASSING_SECTIONS[i];
+    console.log(`\n  Section [${i + 1}/${PASSING_SECTIONS.length}]: ${section.name}`);
+
+    const sectionAnswers = section.ids
+      .filter((id) => !SKIP_IDS.has(id))
+      .map((id) => answerMap.get(id))
+      .filter((a): a is Answer => a !== undefined && a.status !== "?");
+
+    console.log(`    ${sectionAnswers.length} answers to fill`);
+    await fillSection(page, sectionAnswers);
+
+    const isLast = i === PASSING_SECTIONS.length - 1;
+    if (isLast) {
+      console.log(`    Saving final section...`);
+      await saveAndContinue(page, "Save");
+    } else {
+      console.log(`    Save and continue -> ${section.continueValue}...`);
+      await saveAndContinue(page, section.continueValue);
+    }
+    console.log(`    URL after save: ${page.url()}`);
+  }
+}
+
 async function fillSilverBySection(page: Page, allAnswers: Answer[]): Promise<void> {
   const answerMap = new Map<string, Answer>(allAnswers.map((a) => [a.id, a]));
 
@@ -1005,16 +1144,13 @@ async function main(): Promise<void> {
     }
   }
 
-  // --- Fill passing section ---
+  // --- Fill passing section-by-section ---
   if (!silverOnly) {
-    console.log("\nFilling passing-level criteria...");
+    console.log("\nFilling passing-level criteria (section by section)...");
     const pAnswers = passingAnswers();
     console.log(`  ${pAnswers.length} criteria to fill`);
-    await fillSection(page, pAnswers);
-
-    console.log("Submitting passing section...");
-    await submitAndExit(page);
-    console.log(`  After submit, URL: ${page.url()}`);
+    await fillPassingBySection(page, pAnswers);
+    console.log(`  After passing fill, URL: ${page.url()}`);
 
     if (passingOnly) {
       console.log(`\nDone (passing only). Check https://www.bestpractices.dev/projects/${PROJECT_ID}`);
