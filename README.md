@@ -28,8 +28,8 @@
 # Recommended: Get latest v1.x updates automatically
 - uses: clouatre-labs/setup-goose-action@v1
 
-# Pin to exact version
-- uses: clouatre-labs/setup-goose-action@v1.0.3
+# Pin to exact version (SHA recommended for supply chain integrity)
+- uses: clouatre-labs/setup-goose-action@35f35c3a8f08aa333486693114938ec643bf8310  # v1.0.7
 
 # Custom Goose version
 - uses: clouatre-labs/setup-goose-action@v1
