@@ -34,7 +34,7 @@
 # Custom Goose version
 - uses: clouatre-labs/setup-goose-action@v1
   with:
-    version: '1.13.0'
+    version: '1.28.0'
 ```
 
 **Current default Goose version:** See [`action.yml`](action.yml#L9)
