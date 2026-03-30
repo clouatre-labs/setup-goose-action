@@ -7,7 +7,7 @@
   <a href="https://www.bestpractices.dev/projects/11555"><img alt="OpenSSF Best Practices" src="https://www.bestpractices.dev/projects/11555/badge"></a>
 </p>
 
-<p align="center">A GitHub Action that installs and caches the <a href="https://github.com/block/goose">Goose AI agent</a> for CI/CD workflows. OpenSSF silver certified: fewer than 0.8% of open source projects reach this level.</p>
+<p align="center">A GitHub Action that installs and caches the <a href="https://github.com/block/goose">Goose AI agent</a> for CI/CD workflows. OpenSSF silver certified: fewer than 1% of open source projects reach this level.</p>
 
 **Available on the [GitHub Marketplace](https://github.com/marketplace/actions/setup-goose-cli)**
 
