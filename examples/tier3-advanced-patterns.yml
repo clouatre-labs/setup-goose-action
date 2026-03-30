@@ -6,27 +6,27 @@ permissions:
 
 jobs:
   review:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: |
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           fetch-depth: 0
 
       - name: Setup Goose CLI
-        uses: clouatre-labs/setup-goose-action@v1
+        uses: clouatre-labs/setup-goose-action@35f35c3a8f08aa333486693114938ec643bf8310  # v1.0.7
 
       - name: AI Diff Review
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           mkdir -p ~/.config/goose
           cat > ~/.config/goose/config.yaml << 'EOF'
-          GOOSE_PROVIDER: openai
-          GOOSE_MODEL: o4-mini
+          GOOSE_PROVIDER: openrouter
+          GOOSE_MODEL: inception/mercury-2
           keyring: false
           EOF
           
@@ -46,7 +46,7 @@ jobs:
           goose run --instructions prompt.txt --no-session --quiet > review.md
 
       - name: Upload Review Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           name: ai-review
           path: review.md
