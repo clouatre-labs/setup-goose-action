@@ -6,6 +6,7 @@
 [![Composite Action](https://img.shields.io/badge/Composite-Action-green?logo=github)](https://docs.github.com/en/actions/creating-actions/about-custom-actions#composite-actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/clouatre-labs/setup-goose-action)](https://github.com/clouatre-labs/setup-goose-action/releases/latest)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/11555/badge)](https://www.bestpractices.dev/projects/11555)
 
 A GitHub Action that installs and caches the [Goose AI agent](https://github.com/block/goose) for CI/CD workflows. Goose is an open-source AI coding agent by Block. This composite action downloads the binary, caches it across runs, and adds it to `PATH`.
 
@@ -159,7 +160,7 @@ Check available versions at [Goose Releases](https://github.com/block/goose/rele
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or PR.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contribution guide, including commit signing requirements, coding standards, and the PR process.
 
 ## License
 
