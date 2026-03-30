@@ -360,6 +360,12 @@ const ANSWERS: Answer[] = [
       "No critical vulnerabilities have been reported or identified. The project actively monitors upstream dependencies via Renovate. URL: https://github.com/clouatre-labs/setup-goose-action/security",
   },
   {
+    id: "vulnerabilities_critical_fixed_rapid",
+    status: "Met",
+    justification:
+      "No critical vulnerabilities have been reported or identified. SECURITY.md defines a 14-day remediation SLA for critical/high findings, ensuring rapid response. URL: https://github.com/clouatre-labs/setup-goose-action/blob/main/SECURITY.md",
+  },
+  {
     id: "vulnerabilities_fixed_60_days",
     status: "Met",
     justification:
@@ -388,6 +394,12 @@ const ANSWERS: Answer[] = [
     status: "Met",
     justification:
       "Zizmor runs on every pull request and every push to main. Renovate PRs also trigger the full CI suite weekly. URL: https://github.com/clouatre-labs/setup-goose-action/actions",
+  },
+  {
+    id: "static_analysis_common_vulnerabilities",
+    status: "Met",
+    justification:
+      "Zizmor specifically checks for GitHub Actions security vulnerabilities (template injection, dangerous permissions, unpinned actions). actionlint validates workflow structure. URL: https://github.com/clouatre-labs/setup-goose-action/blob/main/.github/workflows/test.yml",
   },
   {
     id: "dynamic_analysis",
@@ -713,6 +725,7 @@ const SKIP_IDS = new Set([
 
 // Passing-ONLY criterion IDs (level 0 only -- NOT re-presented on the silver form).
 // Criteria that appear on BOTH forms are intentionally excluded here so silverAnswers() picks them up.
+// Mirror the reference set from code-analyze-mcp exactly, minus criteria not on the passing form.
 const PASSING_ONLY_IDS = new Set([
   "description_good", "interact", "contribution",
   "floss_license", "floss_license_osi", "license_location",
@@ -720,7 +733,7 @@ const PASSING_ONLY_IDS = new Set([
   "discussion", "english", "maintained", "repo_public", "repo_track",
   "repo_interim", "repo_distributed", "version_unique", "version_semver",
   "version_tags", "release_notes", "release_notes_vulns",
-  "report_url", "report_process", "report_responses",
+  "report_process", "report_responses",
   "enhancement_responses", "report_archive",
   "vulnerability_report_process", "vulnerability_report_private",
   "vulnerability_report_response",
@@ -733,14 +746,12 @@ const PASSING_ONLY_IDS = new Set([
   "crypto_working", "crypto_pfs",
   "crypto_password_storage", "crypto_random",
   "delivery_mitm", "delivery_unsigned",
-  "vulnerabilities_critical_fixed", "vulnerabilities_fixed_60_days",
+  "vulnerabilities_critical_fixed", "vulnerabilities_critical_fixed_rapid",
+  "vulnerabilities_fixed_60_days",
   "no_leaked_credentials",
   "static_analysis", "static_analysis_fixed", "static_analysis_often",
   "dynamic_analysis", "dynamic_analysis_enable_assertions", "dynamic_analysis_fixed",
-  "hardening",
-  "crypto_used_network", "crypto_tls12", "crypto_certificate_verification",
-  "crypto_verification_private",
-  "installation_common", "build_reproducible",
+  "report_url",
 ]);
 
 // Criteria that appear on BOTH passing and silver forms.
