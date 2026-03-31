@@ -46,6 +46,7 @@ This policy covers **this GitHub Action only**.
 ## Security Features
 
 This action:
+- OpenSSF Best Practices **Silver** certified — fewer than 1% of open source projects reach this level ([badge](https://www.bestpractices.dev/projects/11555))
 - Downloads binaries only from official [block/goose releases](https://github.com/block/goose/releases)
 - Uses GitHub Actions cache with version-specific keys
 - Requires minimal permissions (`contents: read`)
