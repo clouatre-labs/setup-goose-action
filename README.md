@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml"><img alt="CI" src="https://github.com/clouatre-labs/setup-goose-action/actions/workflows/test.yml/badge.svg"></a>
   <a href="https://github.com/marketplace/actions/setup-goose-cli"><img alt="GitHub Marketplace" src="https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github"></a>
-  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
+  <a href="LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"></a>
   <a href="https://www.bestpractices.dev/projects/11555"><img alt="OpenSSF Best Practices" src="https://www.bestpractices.dev/projects/11555/badge"></a>
 </p>
 
@@ -163,7 +163,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contribution guide, includin
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Apache 2.0. See [LICENSE](LICENSE).
 
 ## Related
 
