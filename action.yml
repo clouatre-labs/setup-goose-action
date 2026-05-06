@@ -53,7 +53,7 @@ runs:
           echo "::group::Checking for latest Goose version"
           
           # Query GitHub API for latest release using gh CLI
-          LATEST_TAG=$(gh api repos/block/goose/releases/latest --jq .tag_name)
+          LATEST_TAG=$(gh api repos/aaif-goose/goose/releases/latest --jq .tag_name)
           
           if [ $? -ne 0 ]; then
             echo "::error::Failed to query GitHub API for latest release"
@@ -122,8 +122,8 @@ runs:
         TEMP_DIR=$(mktemp -d)
         trap 'rm -rf "$TEMP_DIR"' EXIT
         echo "Downloading $ARCHIVE"
-        gh release download "v${VERSION}" -R block/goose --pattern "${ARCHIVE}" -D "$TEMP_DIR"
-        gh attestation verify "$TEMP_DIR/${ARCHIVE}" -R block/goose
+        gh release download "v${VERSION}" -R aaif-goose/goose --pattern "${ARCHIVE}" -D "$TEMP_DIR"
+        gh attestation verify "$TEMP_DIR/${ARCHIVE}" -R aaif-goose/goose
         tar -xj -C ~/.local/bin -f "$TEMP_DIR/${ARCHIVE}"
 
         echo "::endgroup::"
