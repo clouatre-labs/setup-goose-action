@@ -19,8 +19,8 @@ permissions:
   contents: read
 
 env:
-  # renovate: datasource=github-releases depName=block/goose extractVersion=^v(?<version>.*)$
-  DEFAULT_GOOSE_VERSION: '1.15.0'
+  # renovate: datasource=github-releases depName=aaif-goose/goose extractVersion=^v(?<version>.*)$
+  DEFAULT_GOOSE_VERSION: '1.30.0'
 
 jobs:
   test-ubuntu:
@@ -108,7 +108,7 @@ jobs:
       - name: Test older version
         uses: ./
         with:
-          version: '1.11.0'
+          version: '1.30.0'
 
       - name: Verify correct version
         run: |

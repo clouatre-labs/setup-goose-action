@@ -14,7 +14,7 @@
       "matchStrings": [
         "default:\\s*['\"](?<currentValue>\\d+\\.\\d+\\.\\d+)['\"]"
       ],
-      "depNameTemplate": "block/goose",
+      "depNameTemplate": "aaif-goose/goose",
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v(?<version>.*)$"
     }

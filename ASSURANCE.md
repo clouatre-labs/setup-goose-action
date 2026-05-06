@@ -4,13 +4,13 @@ This document provides the security assurance case for setup-goose-action.
 
 ## What the action does
 
-setup-goose-action is a GitHub Actions composite action that downloads a pre-built binary of the [Goose AI agent](https://github.com/block/goose) from the official GitHub Releases page, caches it using the GitHub Actions cache, and adds it to `$GITHUB_PATH`. The action does not execute Goose, does not handle API keys, and performs no AI operations itself.
+setup-goose-action is a GitHub Actions composite action that downloads a pre-built binary of the [Goose AI agent](https://github.com/aaif-goose/goose) from the official GitHub Releases page, caches it using the GitHub Actions cache, and adds it to `$GITHUB_PATH`. The action does not execute Goose, does not handle API keys, and performs no AI operations itself.
 
 ## Trust boundaries
 
 | Boundary | Direction | Description |
 |----------|-----------|-------------|
-| GitHub Releases (HTTPS) | Inbound | Goose binary downloaded from `github.com/block/goose/releases` |
+| GitHub Releases (HTTPS) | Inbound | Goose binary downloaded from `github.com/aaif-goose/goose/releases` |
 | GitHub Actions cache | Bidirectional | Cached binary stored and restored by `actions/cache` |
 | `$GITHUB_PATH` | Outbound | Binary location appended to the runner PATH |
 | Caller workflow | Inbound | `version` and `check-latest` inputs supplied by the calling workflow |
@@ -21,7 +21,7 @@ The action makes no outbound calls beyond the GitHub Releases download URL and t
 
 The primary attack surfaces are:
 
-1. **Supply chain -- upstream binary**: The Goose binary is downloaded from `github.com/block/goose/releases`. This is mitigated by using HTTPS exclusively and pinning to a caller-specified version. The `check-latest` input queries the GitHub API for the latest release tag before downloading.
+1. **Supply chain -- upstream binary**: The Goose binary is downloaded from `github.com/aaif-goose/goose/releases`. This is mitigated by using HTTPS exclusively and pinning to a caller-specified version. The `check-latest` input queries the GitHub API for the latest release tag before downloading.
 
 2. **Prompt injection in caller workflows**: Callers that pass user-controlled content (git diffs, commit messages) to Goose are vulnerable to prompt injection. This is a known risk documented in the README with three defensive tiers (see [Security Patterns](README.md#security-patterns)).
 
