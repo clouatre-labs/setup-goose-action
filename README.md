@@ -6,7 +6,7 @@
   <a href="https://www.bestpractices.dev/projects/11555"><img alt="OpenSSF Best Practices" src="https://img.shields.io/cii/level/11555?style=for-the-badge" height="20"></a>
 </p>
 
-<p align="center">A GitHub Action that installs and caches the <a href="https://github.com/block/goose">Goose AI agent</a> for CI/CD workflows. OpenSSF silver certified: fewer than 1% of open source projects reach this level.</p>
+<p align="center">A GitHub Action that installs and caches the <a href="https://github.com/aaif-goose/goose">Goose AI agent</a> for CI/CD workflows. OpenSSF silver certified: fewer than 1% of open source projects reach this level.</p>
 
 **Available on the [GitHub Marketplace](https://github.com/marketplace/actions/setup-goose-cli)**
 
@@ -40,7 +40,7 @@
 
 ## Prerequisites
 
-1. **Get an API key** from your chosen provider: [Supported Providers](https://block.github.io/goose/docs/getting-started/providers/)
+1. **Get an API key** from your chosen provider: [Supported Providers](https://goose-docs.ai/docs/getting-started/providers/)
 
 2. **Add it as a repository secret:**
    - Go to **Settings > Secrets and variables > Actions**
@@ -154,7 +154,7 @@ Ensure you're using the action before attempting to run `goose`:
 
 ### Unsupported version
 
-Check available versions at [Goose Releases](https://github.com/block/goose/releases). Ensure the version exists and has pre-built binaries.
+Check available versions at [Goose Releases](https://github.com/aaif-goose/goose/releases). Ensure the version exists and has pre-built binaries.
 
 ## Contributing
 
@@ -167,8 +167,8 @@ Apache 2.0. See [LICENSE](LICENSE).
 ## Related
 
 - [AI-Augmented CI/CD](https://clouatre.ca/posts/ai-augmented-cicd/): 3-tier security model for AI code review in CI/CD pipelines
-- [Goose](https://github.com/block/goose): Official Goose repository
-- [Goose Documentation](https://block.github.io/goose/)
+- [Goose](https://github.com/aaif-goose/goose): Official Goose repository
+- [Goose Documentation](https://goose-docs.ai/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Setup Kiro Action](https://github.com/clouatre-labs/setup-kiro-action): Similar action for Kiro CLI (AWS-native, SIGV4 auth)
 - [Setup Q CLI Action](https://github.com/clouatre-labs/setup-q-cli-action): Similar action for Amazon Q Developer CLI

@@ -39,7 +39,7 @@ This policy covers **this GitHub Action only**.
 
 ### Out of Scope
 
-- **Goose CLI vulnerabilities** - Report to [block/goose security](https://github.com/block/goose/security)
+- **Goose CLI vulnerabilities** - Report to [aaif-goose/goose security](https://github.com/aaif-goose/goose/security)
 - **Workflow security patterns** - See [examples/](examples/) for defensive CI/CD architectures
 - **Prompt injection in AI workflows** - This is a known risk documented in the README. See [Security Patterns](README.md#security-patterns) for mitigation strategies.
 
@@ -47,7 +47,7 @@ This policy covers **this GitHub Action only**.
 
 This action:
 - OpenSSF Best Practices **Silver** certified — fewer than 1% of open source projects reach this level ([badge](https://www.bestpractices.dev/projects/11555))
-- Downloads binaries only from official [block/goose releases](https://github.com/block/goose/releases)
+- Downloads binaries only from official [aaif-goose/goose releases](https://github.com/aaif-goose/goose/releases)
 - Uses GitHub Actions cache with version-specific keys
 - Requires minimal permissions (`contents: read`)
 - Does not store or transmit API keys (user-managed via secrets)
