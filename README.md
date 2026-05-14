@@ -1,8 +1,6 @@
 # Setup Goose Action
 
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/setup-goose-cli)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
-[![OpenSSF Best Practices](https://img.shields.io/cii/level/11555?style=flat-square)](https://www.bestpractices.dev/projects/11555)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Setup%20Goose%20CLI-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/setup-goose-cli) [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE) [![OpenSSF Best Practices](https://img.shields.io/cii/level/11555?style=flat-square)](https://www.bestpractices.dev/projects/11555)
 
 A GitHub Action that installs and caches the [Goose AI agent](https://github.com/aaif-goose/goose) for CI/CD workflows. OpenSSF silver certified: fewer than 1% of open source projects reach this level.
 
