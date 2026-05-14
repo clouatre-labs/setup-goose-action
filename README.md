@@ -24,7 +24,7 @@ A GitHub Action that installs and caches the [Goose AI agent](https://github.com
 - uses: clouatre-labs/setup-goose-action@v1
 
 # Pin to exact version (SHA recommended for supply chain integrity)
-- uses: clouatre-labs/setup-goose-action@35f35c3a8f08aa333486693114938ec643bf8310  # v1.0.7
+- uses: clouatre-labs/setup-goose-action@7e548b5d23fbe5159d6ec1a12112d1bcaa644cc2  # v1.0.9
 
 # Custom Goose version
 - uses: clouatre-labs/setup-goose-action@v1
@@ -65,7 +65,7 @@ jobs:
         run: pipx run ruff check --output-format=json . > lint-results.json || true
 
       - name: Setup Goose CLI
-        uses: clouatre-labs/setup-goose-action@35f35c3a8f08aa333486693114938ec643bf8310  # v1.0.7
+        uses: clouatre-labs/setup-goose-action@7e548b5d23fbe5159d6ec1a12112d1bcaa644cc2  # v1.0.9
 
       - name: AI Analysis
         env:

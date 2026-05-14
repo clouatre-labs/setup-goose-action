@@ -123,7 +123,10 @@ runs:
         trap 'rm -rf "$TEMP_DIR"' EXIT
         echo "Downloading $ARCHIVE"
         gh release download "v${VERSION}" -R aaif-goose/goose --pattern "${ARCHIVE}" -D "$TEMP_DIR"
-        gh attestation verify "$TEMP_DIR/${ARCHIVE}" -R aaif-goose/goose
+        gh attestation verify "$TEMP_DIR/${ARCHIVE}" -R aaif-goose/goose || {
+          echo "::error::Binary attestation failed for ${ARCHIVE}. The release may be unsigned or tampered."
+          exit 1
+        }
         tar -xj -C ~/.local/bin -f "$TEMP_DIR/${ARCHIVE}"
 
         echo "::endgroup::"
