@@ -1,6 +1,3 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-FileCopyrightText: 2026 Hugues Clouâtre -->
-
 # AI Policy
 
 AI coding tools are used in this project as productivity aids, the same
